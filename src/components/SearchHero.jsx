@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, MapPin, Search, ArrowRight, Euro, Maximize, Bed, Sofa, Droplets, Check, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
+import { Building2, MapPin, Search, ArrowRight, Euro, Maximize, Bed, Sofa, Droplets, Check, ChevronDown, ChevronUp, SlidersHorizontal, Trees, Car, Sun, Sparkles } from 'lucide-react';
 import Button from './ui/Button';
 import CitySelector from './CitySelector';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -94,7 +94,7 @@ const SearchHero = ({
                     </div>
 
                     {/* Content Panel */}
-                    <div className="bg-white rounded-b-3xl rounded-tr-3xl rounded-tl-none p-6 md:p-8 shadow-2xl relative z-30 min-h-[320px] flex items-start">
+                    <div className="bg-white rounded-b-3xl rounded-tr-3xl rounded-tl-none p-6 md:p-8 shadow-2xl relative z-30 min-h-[200px] flex items-start">
 
                         <AnimatePresence mode="wait">
                             {actionTab === 'buy' ? (
@@ -104,65 +104,67 @@ const SearchHero = ({
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full"
+                                    className="flex flex-col w-full"
                                 >
-                                    <div className="w-full text-left">
-                                        <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Type de bien</label>
-                                        <div className="relative group">
-                                            <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
-                                            <select
-                                                value={activeType}
-                                                onChange={(e) => setActiveType(e.target.value)}
-                                                className="w-full h-[58px] pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
-                                            >
-                                                <option value="Tous">Tout voir</option>
-                                                <option value="Maison">Maison</option>
-                                                <option value="Appartement">Appartement</option>
-                                                <option value="Terrain">Terrain</option>
-                                            </select>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full">
+                                        <div className="w-full text-left">
+                                            <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Type de bien</label>
+                                            <div className="relative group">
+                                                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
+                                                <select
+                                                    value={activeType}
+                                                    onChange={(e) => setActiveType(e.target.value)}
+                                                    className="w-full h-[58px] pl-12 pr-4 bg-white border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-50"
+                                                >
+                                                    <option value="Tous">Tout voir</option>
+                                                    <option value="Maison">Maison</option>
+                                                    <option value="Appartement">Appartement</option>
+                                                    <option value="Terrain">Terrain</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div className="w-full text-left">
-                                        <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Localisation</label>
-                                        <CitySelector selectedCities={activeCities} onChange={setActiveCities} cityCounts={cityCounts} loading={loading} />
-                                    </div>
-                                    <div className="w-full text-left">
-                                        <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Budget Max</label>
-                                        <div className="relative group">
-                                            <Euro className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
-                                            <select
-                                                value={activeBudget}
-                                                onChange={(e) => setActiveBudget(e.target.value)}
-                                                className="w-full h-[58px] pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
-                                            >
-                                                <option value="">Indifférent</option>
-                                                <option value="100000">100 000 €</option>
-                                                <option value="150000">150 000 €</option>
-                                                <option value="200000">200 000 €</option>
-                                                <option value="250000">250 000 €</option>
-                                                <option value="300000">300 000 €</option>
-                                                <option value="400000">400 000 €</option>
-                                                <option value="500000">500 000 €</option>
-                                                <option value="700000">700 000 €</option>
-                                                <option value="1000000">1 000 000 €</option>
-                                            </select>
+                                        <div className="w-full text-left">
+                                            <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Localisation</label>
+                                            <CitySelector selectedCities={activeCities} onChange={setActiveCities} cityCounts={cityCounts} loading={loading} />
                                         </div>
-                                    </div>
-                                    <div className="md:col-span-3 flex justify-center mt-2 mb-4">
-                                        <button
-                                            onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-                                            className="flex items-center gap-2 text-gray-500 hover:text-[#002B5B] font-bold text-sm transition-colors py-2 px-4 rounded-full hover:bg-gray-100"
-                                        >
-                                            <SlidersHorizontal size={16} />
-                                            Critères précis
-                                            {countActiveAdvanced() > 0 && (
-                                                <span className="bg-[#C5A059] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
-                                                    {countActiveAdvanced()}
-                                                </span>
-                                            )}
-                                            {isAdvancedOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                                        </button>
+                                        <div className="w-full text-left">
+                                            <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Budget Max</label>
+                                            <div className="relative group">
+                                                <Euro className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
+                                                <select
+                                                    value={activeBudget}
+                                                    onChange={(e) => setActiveBudget(e.target.value)}
+                                                    className="w-full h-[58px] pl-12 pr-4 bg-white border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-50"
+                                                >
+                                                    <option value="">Budget illimité</option>
+                                                    <option value="100000">100 000 €</option>
+                                                    <option value="150000">150 000 €</option>
+                                                    <option value="200000">200 000 €</option>
+                                                    <option value="250000">250 000 €</option>
+                                                    <option value="300000">300 000 €</option>
+                                                    <option value="400000">400 000 €</option>
+                                                    <option value="500000">500 000 €</option>
+                                                    <option value="700000">700 000 €</option>
+                                                    <option value="1000000">1 000 000 €</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="md:col-span-3 flex justify-center mt-2 mb-1">
+                                            <button
+                                                onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                                                className="flex items-center gap-2 text-gray-500 hover:text-[#002B5B] font-bold text-sm transition-colors py-2 px-4 rounded-full hover:bg-gray-100"
+                                            >
+                                                <SlidersHorizontal size={16} />
+                                                Filtres avancés
+                                                {countActiveAdvanced() > 0 && (
+                                                    <span className="bg-[#C5A059] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
+                                                        {countActiveAdvanced()}
+                                                    </span>
+                                                )}
+                                                {isAdvancedOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* Advanced Filters Panel */}
@@ -172,21 +174,21 @@ const SearchHero = ({
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } }}
                                                 exit={{ height: 0, opacity: 0, transition: { duration: 0.3, ease: 'easeInOut' } }}
-                                                className="md:col-span-3 overflow-hidden pb-1"
+                                                className="overflow-hidden w-full"
                                             >
-                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 border-t border-gray-100 pt-6">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 pt-2">
                                                     {/* Min Surface */}
                                                     <div className="text-left">
                                                         <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Surface Min (m²)</label>
-                                                        <div className="relative">
+                                                        <div className="relative max-w-[150px]">
                                                             <Maximize className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
                                                             <input
                                                                 type="number"
                                                                 value={activeMinSurface}
                                                                 onChange={(e) => setActiveMinSurface(e.target.value)}
-                                                                placeholder="Ex: 50"
-                                                                className="w-full h-11 pl-10 pr-4 bg-gray-50 border border-gray-100 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] transition-all"
+                                                                className="w-full h-11 pl-10 pr-8 bg-white border border-gray-200 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] transition-all"
                                                             />
+                                                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xs">m²</span>
                                                         </div>
                                                     </div>
 
@@ -198,7 +200,7 @@ const SearchHero = ({
                                                             <select
                                                                 value={activeMinRooms}
                                                                 onChange={(e) => setActiveMinRooms(e.target.value)}
-                                                                className="w-full h-11 pl-10 pr-4 bg-gray-50 border border-gray-100 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] appearance-none cursor-pointer"
+                                                                className="w-full h-11 pl-10 pr-4 bg-white border border-gray-200 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] appearance-none cursor-pointer"
                                                             >
                                                                 <option value="">Indifférent</option>
                                                                 <option value="1">1+</option>
@@ -211,21 +213,29 @@ const SearchHero = ({
                                                     </div>
 
                                                     {/* Features Tags */}
-                                                    <div className="md:col-span-2 text-left">
-                                                        <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Caractéristiques & État</label>
-                                                        <div className="flex flex-wrap gap-2 text-justify">
-                                                            {['Jardin', 'Garage', 'Terrasse', 'Balcon', 'Sans travaux'].map(feat => (
-                                                                <button
-                                                                    key={feat}
-                                                                    onClick={() => toggleFeature(feat)}
-                                                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${activeFeatures.includes(feat)
-                                                                        ? 'bg-[#002B5B] border-[#002B5B] text-white'
-                                                                        : 'bg-white border-gray-200 text-gray-500 hover:border-[#002B5B] hover:text-[#002B5B]'
-                                                                        }`}
-                                                                >
-                                                                    {feat}
-                                                                </button>
-                                                            ))}
+                                                    <div className="md:col-span-2 lg:col-span-3 flex flex-col lg:items-end">
+                                                        <div className="flex flex-col items-start">
+                                                            <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Caractéristiques & État</label>
+                                                            <div className="flex flex-wrap lg:flex-nowrap gap-2">
+                                                                {[
+                                                                    { id: 'Jardin', icon: Trees },
+                                                                    { id: 'Garage', icon: Car },
+                                                                    { id: 'Terrasse', icon: Sun },
+                                                                    { id: 'Sans travaux', icon: Sparkles }
+                                                                ].map(({ id, icon: Icon }) => (
+                                                                    <button
+                                                                        key={id}
+                                                                        onClick={() => toggleFeature(id)}
+                                                                        className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border flex items-center gap-2 ${activeFeatures.includes(id)
+                                                                            ? 'bg-[#002B5B] border-[#002B5B] text-white'
+                                                                            : 'bg-white border-gray-200 text-gray-500 hover:border-[#002B5B] hover:text-[#002B5B]'
+                                                                            }`}
+                                                                    >
+                                                                        <Icon size={14} />
+                                                                        {id}
+                                                                    </button>
+                                                                ))}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
