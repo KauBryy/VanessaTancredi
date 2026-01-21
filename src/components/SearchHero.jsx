@@ -1,17 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, MapPin, Search, ArrowRight, Euro } from 'lucide-react';
+import { Building2, MapPin, Search, ArrowRight, Euro, Maximize, Bed, Sofa, Droplets, Check, ChevronDown, ChevronUp, SlidersHorizontal } from 'lucide-react';
 import Button from './ui/Button';
 import CitySelector from './CitySelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/hero_background_charme.png';
 
-const SearchHero = ({ activeType, setActiveType, activeCities, setActiveCities, activeBudget, setActiveBudget, cities, cityCounts, loading }) => {
+const SearchHero = ({
+    activeType, setActiveType,
+    activeCities, setActiveCities,
+    activeBudget, setActiveBudget,
+    activeMinSurface, setActiveMinSurface,
+    activeMinRooms, setActiveMinRooms,
+    activeFeatures, setActiveFeatures,
+    cities, cityCounts, loading
+}) => {
     const [actionTab, setActionTab] = useState('buy'); // 'buy' or 'sell'
+    const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
     const navigate = useNavigate();
 
+    const toggleFeature = (feat) => {
+        if (activeFeatures.includes(feat)) {
+            setActiveFeatures(activeFeatures.filter(f => f !== feat));
+        } else {
+            setActiveFeatures([...activeFeatures, feat]);
+        }
+    };
+
+    const countActiveAdvanced = () => {
+        let count = 0;
+        if (activeMinSurface) count++;
+        if (activeMinRooms) count++;
+        count += activeFeatures.length;
+        return count;
+    };
+
     return (
-        <div className="relative h-[85vh] min-h-[700px] flex items-center justify-center z-50">
+        <div className="relative h-[85vh] min-h-[700px] flex items-start justify-center pt-16 md:pt-24 z-50">
             {/* Background Image Parallax Effect can be simpler here: Fixed BG */}
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed"
@@ -20,7 +45,7 @@ const SearchHero = ({ activeType, setActiveType, activeCities, setActiveCities, 
                 <div className="absolute inset-0 bg-gradient-to-b from-[#002B5B]/80 via-[#002B5B]/40 to-white"></div>
             </div>
 
-            <div className="relative z-10 w-full max-w-5xl px-4 flex flex-col items-center text-center">
+            <div className="relative z-10 w-full max-w-5xl px-4 flex flex-col items-center text-center pt-24 md:pt-0">
 
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -69,7 +94,7 @@ const SearchHero = ({ activeType, setActiveType, activeCities, setActiveCities, 
                     </div>
 
                     {/* Content Panel */}
-                    <div className="bg-white rounded-b-3xl rounded-tr-3xl rounded-tl-none p-6 md:p-8 shadow-2xl relative z-30 min-h-[170px] flex items-center">
+                    <div className="bg-white rounded-b-3xl rounded-tr-3xl rounded-tl-none p-6 md:p-8 shadow-2xl relative z-30 min-h-[320px] flex items-start">
 
                         <AnimatePresence mode="wait">
                             {actionTab === 'buy' ? (
@@ -124,8 +149,89 @@ const SearchHero = ({ activeType, setActiveType, activeCities, setActiveCities, 
                                             </select>
                                         </div>
                                     </div>
+                                    <div className="md:col-span-3 flex justify-center mt-2 mb-4">
+                                        <button
+                                            onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                                            className="flex items-center gap-2 text-gray-500 hover:text-[#002B5B] font-bold text-sm transition-colors py-2 px-4 rounded-full hover:bg-gray-100"
+                                        >
+                                            <SlidersHorizontal size={16} />
+                                            Critères précis
+                                            {countActiveAdvanced() > 0 && (
+                                                <span className="bg-[#C5A059] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full ml-1">
+                                                    {countActiveAdvanced()}
+                                                </span>
+                                            )}
+                                            {isAdvancedOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                        </button>
+                                    </div>
 
+                                    {/* Advanced Filters Panel */}
+                                    <AnimatePresence>
+                                        {isAdvancedOpen && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1, transition: { duration: 0.3, ease: 'easeInOut' } }}
+                                                exit={{ height: 0, opacity: 0, transition: { duration: 0.3, ease: 'easeInOut' } }}
+                                                className="md:col-span-3 overflow-hidden pb-1"
+                                            >
+                                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 border-t border-gray-100 pt-6">
+                                                    {/* Min Surface */}
+                                                    <div className="text-left">
+                                                        <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Surface Min (m²)</label>
+                                                        <div className="relative">
+                                                            <Maximize className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
+                                                            <input
+                                                                type="number"
+                                                                value={activeMinSurface}
+                                                                onChange={(e) => setActiveMinSurface(e.target.value)}
+                                                                placeholder="Ex: 50"
+                                                                className="w-full h-11 pl-10 pr-4 bg-gray-50 border border-gray-100 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] transition-all"
+                                                            />
+                                                        </div>
+                                                    </div>
 
+                                                    {/* Min Rooms */}
+                                                    <div className="text-left">
+                                                        <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Chambres Min</label>
+                                                        <div className="relative">
+                                                            <Bed className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" size={16} />
+                                                            <select
+                                                                value={activeMinRooms}
+                                                                onChange={(e) => setActiveMinRooms(e.target.value)}
+                                                                className="w-full h-11 pl-10 pr-4 bg-gray-50 border border-gray-100 rounded-lg text-sm text-[#002B5B] font-bold outline-none focus:border-[#C5A059] appearance-none cursor-pointer"
+                                                            >
+                                                                <option value="">Indifférent</option>
+                                                                <option value="1">1+</option>
+                                                                <option value="2">2+</option>
+                                                                <option value="3">3+</option>
+                                                                <option value="4">4+</option>
+                                                                <option value="5">5+</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Features Tags */}
+                                                    <div className="md:col-span-2 text-left">
+                                                        <label className="block text-[#002B5B] text-[10px] font-bold uppercase tracking-wider mb-2 ml-1">Caractéristiques & État</label>
+                                                        <div className="flex flex-wrap gap-2 text-justify">
+                                                            {['Jardin', 'Garage', 'Terrasse', 'Balcon', 'Sans travaux'].map(feat => (
+                                                                <button
+                                                                    key={feat}
+                                                                    onClick={() => toggleFeature(feat)}
+                                                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border ${activeFeatures.includes(feat)
+                                                                        ? 'bg-[#002B5B] border-[#002B5B] text-white'
+                                                                        : 'bg-white border-gray-200 text-gray-500 hover:border-[#002B5B] hover:text-[#002B5B]'
+                                                                        }`}
+                                                                >
+                                                                    {feat}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
                                 </motion.div>
                             ) : (
                                 <motion.div

@@ -27,13 +27,28 @@ const PropertyCard = ({ property, onClick }) => (
                 <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.status === 'Location' ? 'bg-[#C5A059]/90' : 'bg-[#002B5B]/90'}`}>
                     {property.status}
                 </span>
-                {/* Example of another badge */}
-                <span className="px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#002B5B] bg-white/90 shadow-lg rounded-full backdrop-blur-md">
-                    Exclusivité
-                </span>
+                {/* Marketing Status Badge */}
+                {property.marketing_status && property.marketing_status !== 'Disponible' && (
+                    <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md
+                        ${['Nouveauté', 'Baisse de prix'].includes(property.marketing_status) ? 'bg-[#C5A059]/90' : ''}
+                        ${property.marketing_status === 'Exclusivité' ? 'bg-[#002B5B]/90' : ''}
+                        ${property.marketing_status.includes('Sous') ? 'bg-orange-600/90' : ''}
+                        ${['Vendu', 'Loué'].includes(property.marketing_status) ? 'bg-red-600/90' : ''}
+                    `}>
+                        {property.marketing_status}
+                    </span>
+                )}
             </div>
 
-            <div className="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-4 group-hover:translate-x-0">
+            <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+                {property.matchScore !== undefined && (
+                    <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.matchScore === 100 ? 'bg-green-500/90' : 'bg-orange-500/90'}`}>
+                        Match {property.matchScore}%
+                    </span>
+                )}
+            </div>
+
+            <div className="absolute top-12 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-4 group-hover:translate-x-0">
                 <button className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white hover:text-red-500 transition-colors shadow-lg">
                     <Heart size={20} />
                 </button>
@@ -56,6 +71,20 @@ const PropertyCard = ({ property, onClick }) => (
                     </p>
                 )}
             </div>
+
+            {/* Missing Criteria Warning */}
+            {property.missingCriteria && property.missingCriteria.length > 0 && (
+                <div className="mb-4 bg-orange-50 border border-orange-100 rounded-lg p-3">
+                    <p className="text-[10px] font-bold text-orange-400 uppercase tracking-wide mb-1">Critères manquants :</p>
+                    <div className="flex flex-wrap gap-1">
+                        {property.missingCriteria.map((item, idx) => (
+                            <span key={idx} className="text-[10px] font-bold text-orange-600 bg-orange-100 px-2 py-0.5 rounded">
+                                {item}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Caractéristiques Styled */}
             <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100">

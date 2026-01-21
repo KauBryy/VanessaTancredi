@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Phone, MapPin, Menu, X } from 'lucide-react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from './ui/Button';
 import { AGENT_INFO, LOGO_URL } from '../constants';
 
@@ -56,24 +57,65 @@ const Header = () => {
                 </nav>
 
                 {/* Mobile Menu Toggle */}
-                <div className="md:hidden text-[#002B5B] cursor-pointer" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                    {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                <div className="md:hidden text-[#002B5B] cursor-pointer p-2" onClick={() => setIsMenuOpen(true)}>
+                    <Menu size={32} />
                 </div>
             </div>
 
-            {/* Mobile Menu Dropdown */}
-            {isMenuOpen && (
-                <div className="md:hidden bg-white border-t border-gray-100 p-4 absolute w-full shadow-xl">
-                    <nav className="flex flex-col gap-4 text-sm font-bold text-gray-500 uppercase tracking-wide">
-                        <Link to="/" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
-                        <Link to="/estimation" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
-                        <Link to="/contact" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
-                        <Button variant="secondary" onClick={() => { navigate('/estimation'); setIsMenuOpen(false); window.scrollTo(0, 0); }} className="w-full justify-center">
-                            Estimer mon bien
-                        </Button>
-                    </nav>
-                </div>
-            )}
+            {/* Mobile Menu Drawer */}
+            <AnimatePresence>
+                {isMenuOpen && (
+                    <>
+                        {/* Overlay */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={() => setIsMenuOpen(false)}
+                            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100]"
+                        />
+                        {/* Drawer */}
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                            className="fixed top-0 right-0 h-full w-[85%] max-w-sm bg-white shadow-2xl z-[101] p-8 flex flex-col gap-8"
+                        >
+                            <div className="flex justify-between items-center mb-4">
+                                <span className="text-xl font-bold text-[#002B5B] uppercase tracking-wider">Menu</span>
+                                <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-gray-50 rounded-full hover:bg-gray-100 transition-colors text-[#002B5B]">
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <nav className="flex flex-col gap-6 text-xl font-bold text-[#002B5B] uppercase tracking-wide">
+                                <Link to="/" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
+                                    Biens
+                                </Link>
+                                <Link to="/estimation" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
+                                    Estimation
+                                </Link>
+                                <Link to="/contact" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
+                                    Contact
+                                </Link>
+                            </nav>
+
+                            <div className="mt-auto space-y-6">
+                                <Button variant="secondary" onClick={() => { navigate('/estimation'); setIsMenuOpen(false); window.scrollTo(0, 0); }} className="w-full justify-center py-4 text-base shadow-lg animate-pulse">
+                                    Estimer mon bien
+                                </Button>
+
+                                <div className="text-center space-y-2 pt-6 border-t border-gray-100">
+                                    <p className="text-xs text-gray-400 font-medium">CONTACT DIRECT</p>
+                                    <p className="text-lg font-bold text-[#002B5B]">{AGENT_INFO.phone}</p>
+                                    <p className="text-sm text-gray-500">{AGENT_INFO.email}</p>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
         </header>
     );
 };

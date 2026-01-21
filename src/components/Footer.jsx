@@ -1,5 +1,6 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram, Lock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { AGENT_INFO, LOGO_URL } from '../constants';
 
@@ -79,6 +80,9 @@ const Footer = () => {
                 <div className="flex gap-6">
                     <span className="hover:text-gray-400 cursor-pointer">Mentions Légales</span>
                     <span className="hover:text-gray-400 cursor-pointer">Politique de confidentialité</span>
+                    <Link to="/admin/login" className="flex items-center gap-1 text-gray-600 hover:text-[#C5A059] transition-colors">
+                        <Lock size={12} /> Administration
+                    </Link>
                 </div>
             </div>
         </footer>

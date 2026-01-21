@@ -19,6 +19,9 @@ const Home = () => {
     const [activeType, setActiveType] = useState('Tous');
     const [activeCities, setActiveCities] = useState([]); // Array of strings, empty = all
     const [activeBudget, setActiveBudget] = useState('');
+    const [activeMinSurface, setActiveMinSurface] = useState('');
+    const [activeMinRooms, setActiveMinRooms] = useState('');
+    const [activeFeatures, setActiveFeatures] = useState([]); // ['Jardin', 'Garage', etc]
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -45,14 +48,66 @@ const Home = () => {
     }, []);
 
     const filteredProperties = useMemo(() => {
-        return properties.filter(p => {
+        // 1. Strict Filters (Base Criteria)
+        let candidates = properties.filter(p => {
             const typeMatch = activeType === 'Tous' || p.type === activeType;
-            // If activeCities is empty, it means "All", otherwise check if property city is in the list
             const cityMatch = activeCities.length === 0 || activeCities.includes(p.city);
             const priceMatch = activeBudget === '' || p.price <= parseInt(activeBudget);
             return typeMatch && cityMatch && priceMatch;
         });
-    }, [properties, activeType, activeCities]);
+
+        // If no advanced filters are active, return candidates directly (Score 100 implied)
+        const hasAdvancedFilters = activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
+
+        if (!hasAdvancedFilters) {
+            return candidates;
+        }
+
+        // 2. Scoring & Ranking (Weighted Filters)
+        const scoredCandidates = candidates.map(p => {
+            let score = 100;
+            let missing = [];
+
+            // Surface check
+            if (activeMinSurface !== '' && p.surface < parseInt(activeMinSurface)) {
+                score -= 20; // Heavy penalty for surface
+                missing.push(`Surface < ${activeMinSurface}m²`);
+            }
+
+            // Rooms check
+            const roomsCount = p.rooms || (p.features ? parseInt(p.features.find(f => f.toLowerCase().includes('chambre')) || 0) : 0);
+            if (activeMinRooms !== '' && roomsCount < parseInt(activeMinRooms)) {
+                score -= 20;
+                missing.push(`< ${activeMinRooms} Chambres`);
+            }
+
+            // Features check
+            activeFeatures.forEach(feat => {
+                let hasFeature = false;
+
+                if (feat === 'Sans travaux') {
+                    // Smart keyword search for condition
+                    const keywords = ['rénové', 'aucun travaux', 'neuf', 'impeccable', 'refait', 'excellent état'];
+                    const textContent = `${p.description} ${p.catch_phrase} ${p.features?.join(' ')}`.toLowerCase();
+                    hasFeature = keywords.some(k => textContent.includes(k));
+                } else {
+                    // Standard feature check
+                    hasFeature = p.features?.some(f => f.toLowerCase().includes(feat.toLowerCase()));
+                }
+
+                if (!hasFeature) {
+                    score -= 10;
+                    missing.push(`${feat === 'Sans travaux' ? 'Travaux à prévoir' : `Pas de ${feat}`}`);
+                }
+            });
+
+            return { ...p, matchScore: Math.max(0, score), missingCriteria: missing };
+        });
+
+        // 3. Sort by Score (Best match first)
+        return scoredCandidates.sort((a, b) => b.matchScore - a.matchScore);
+
+    }, [properties, activeType, activeCities, activeBudget, activeMinSurface, activeMinRooms, activeFeatures]);
 
     const cityCounts = useMemo(() => {
         const counts = {};
@@ -83,16 +138,22 @@ const Home = () => {
                 setActiveCities={setActiveCities}
                 activeBudget={activeBudget}
                 setActiveBudget={setActiveBudget}
+                activeMinSurface={activeMinSurface}
+                setActiveMinSurface={setActiveMinSurface}
+                activeMinRooms={activeMinRooms}
+                setActiveMinRooms={setActiveMinRooms}
+                activeFeatures={activeFeatures}
+                setActiveFeatures={setActiveFeatures}
                 cities={cities}
                 cityCounts={cityCounts}
                 loading={loading}
             />
 
             <div className="max-w-7xl mx-auto px-4 pt-24 pb-20 font-sans">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
-                    <div>
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
+                    <div className="text-center md:text-left">
                         <h2 className="text-4xl font-display font-black text-[#002B5B]">Biens à la Une</h2>
-                        <div className="w-24 h-1.5 bg-[#C5A059] mt-3 rounded-full"></div>
+                        <div className="w-24 h-1.5 bg-[#C5A059] mt-3 rounded-full mx-auto md:mx-0"></div>
                     </div>
                     <p className="text-gray-500 max-w-sm text-right hidden md:block">
                         Découvrez notre sélection exclusive de biens sur le secteur de Mercy-le-Bas, Boulange et environs.
@@ -126,8 +187,15 @@ const Home = () => {
                 {!loading && filteredProperties.length === 0 && (
                     <div className="text-center py-20 bg-gray-50 border border-dashed border-gray-300 rounded-xl">
                         <p className="text-gray-500 mb-4">Aucun bien ne correspond à vos critères pour le moment.</p>
-                        <Button variant="ghost" onClick={() => { setActiveType('Tous'); setActiveCities([]) }}>
-                            Effacer les filtres
+                        <Button variant="ghost" onClick={() => {
+                            setActiveType('Tous');
+                            setActiveCities([]);
+                            setActiveBudget('');
+                            setActiveMinSurface('');
+                            setActiveMinRooms('');
+                            setActiveFeatures([]);
+                        }}>
+                            Effacer tous les filtres
                         </Button>
                     </div>
                 )}

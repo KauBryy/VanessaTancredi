@@ -11,9 +11,11 @@ create table public.properties (
   type text not null, -- 'Maison', 'Appartement', 'Terrain'
   status text not null default 'Vente', -- 'Vente', 'Location'
   surface numeric,
+  rooms numeric,
   city text not null,
   description text,
   image_url text,
+  images text[], -- Array of image URLs (gallery)
   features text[] -- Array of strings
 );
 
