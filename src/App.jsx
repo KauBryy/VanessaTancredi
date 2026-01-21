@@ -6,12 +6,14 @@ import Home from './pages/Home';
 import PropertyDetail from './pages/PropertyDetail';
 import Contact from './pages/Contact';
 import Estimation from './pages/Estimation';
+import Fees from './pages/Fees';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import PropertyForm from './pages/admin/PropertyForm';
 import ProtectedRoute from './pages/admin/ProtectedRoute';
 
 import FixedMobileContact from './components/FixedMobileContact';
+import ScrollToTop from './components/ScrollToTop';
 
 function Layout() {
     return (
@@ -30,6 +32,7 @@ function Layout() {
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Layout />}>
@@ -37,6 +40,7 @@ function App() {
                     <Route path="property/:id" element={<PropertyDetail />} />
                     <Route path="contact" element={<Contact />} />
                     <Route path="estimation" element={<Estimation />} />
+                    <Route path="honoraires" element={<Fees />} />
                 </Route>
 
                 {/* Admin Routes */}

@@ -1,10 +1,15 @@
 import React from 'react';
-import { Phone, Mail, MapPin } from 'lucide-react';
+import { Phone, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AGENT_INFO, LOGO_URL } from '../constants';
 
 const Footer = () => {
     const navigate = useNavigate();
+
+    const handleNavigation = (path) => {
+        navigate(path);
+        window.scrollTo(0, 0);
+    };
 
     return (
         <footer className="bg-[#1A1A1A] text-white py-16 px-4 border-t-8 border-[#C5A059] font-sans">
@@ -12,7 +17,7 @@ const Footer = () => {
                 <div className="col-span-1 md:col-span-2">
                     <div className="flex items-center gap-4 mb-6">
                         <div className="bg-white p-2 rounded">
-                            <img src={LOGO_URL} alt="Borbiconi" className="h-8" />
+                            <img src={LOGO_URL} alt="Borbiconi" className="h-20" />
                         </div>
                     </div>
                     <p className="text-gray-400 mb-6 leading-relaxed max-w-sm">
@@ -21,8 +26,27 @@ const Footer = () => {
                         Partenaire officielle : <strong className="text-white">Vanessa Tancredi</strong>
                     </p>
                     <div className="flex gap-4">
-                        <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-[#C5A059] hover:text-white transition-colors cursor-pointer">FB</div>
-                        <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-[#C5A059] hover:text-white transition-colors cursor-pointer">IN</div>
+                        <div className="relative group">
+                            <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 group-hover:bg-[#C5A059] group-hover:text-white transition-colors cursor-pointer">
+                                <Facebook size={20} />
+                            </div>
+
+                            {/* Dropdown Menu */}
+                            <div className="absolute bottom-full left-0 mb-2 w-36 bg-white rounded-lg shadow-xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-50">
+                                <a href={AGENT_INFO.facebookProfile} target="_blank" rel="noopener noreferrer" className="block px-4 py-3 text-gray-800 hover:bg-gray-50 hover:text-[#C5A059] text-xs font-bold border-b border-gray-100 transition-colors">
+                                    MON PROFIL
+                                </a>
+                                <a href={AGENT_INFO.facebookPage} target="_blank" rel="noopener noreferrer" className="block px-4 py-3 text-gray-800 hover:bg-gray-50 hover:text-[#C5A059] text-xs font-bold transition-colors">
+                                    MA PAGE
+                                </a>
+                                {/* Small arrow */}
+                                <div className="absolute -bottom-1 left-4 w-3 h-3 bg-white rotate-45 transform"></div>
+                            </div>
+                        </div>
+
+                        <a href={AGENT_INFO.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-[#C5A059] hover:text-white transition-colors cursor-pointer">
+                            <Instagram size={20} />
+                        </a>
                     </div>
                 </div>
 
@@ -38,10 +62,14 @@ const Footer = () => {
                 <div>
                     <h4 className="font-bold mb-6 text-[#C5A059] uppercase tracking-widest text-xs">Liens Rapides</h4>
                     <ul className="space-y-3 text-gray-400 cursor-pointer font-medium">
-                        <li className="hover:text-white transition-colors" onClick={() => navigate('/')}>Nos Biens en vente</li>
-                        <li className="hover:text-white transition-colors" onClick={() => navigate('/estimation')}>Demander une estimation</li>
-                        <li className="hover:text-white transition-colors" onClick={() => navigate('/contact')}>Nous contacter</li>
-                        <li className="hover:text-white transition-colors text-[#C5A059] pt-2">vanessatancredi-scbi.fr</li>
+                        <li className="hover:text-white transition-colors" onClick={() => handleNavigation('/')}>Nos Biens en vente</li>
+                        <li className="hover:text-white transition-colors" onClick={() => handleNavigation('/estimation')}>Demander une estimation</li>
+                        <li className="hover:text-white transition-colors" onClick={() => handleNavigation('/contact')}>Nous contacter</li>
+                        <li className="hover:text-white transition-colors" onClick={() => handleNavigation('/honoraires')}>Honoraires & Barème</li>
+                        <li className="pt-4 border-t border-gray-800 mt-2">
+                            <a href="https://scbi.fr" target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors text-gray-500 hover:text-[#C5A059] mb-1">Site Officiel scbi.fr</a>
+                            <a href="https://scbi.eu" target="_blank" rel="noopener noreferrer" className="block hover:text-white transition-colors text-gray-500 hover:text-[#C5A059]">Portail scbi.eu</a>
+                        </li>
                     </ul>
                 </div>
             </div>

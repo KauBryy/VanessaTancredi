@@ -18,22 +18,31 @@ const Estimation = () => {
         e.preventDefault();
         setStatus('loading');
 
-        const message = `Demande d'estimation :
-Type: ${formData.type}
-Ville: ${formData.city}
-Surface: ${formData.surface} m²
-Pièces: ${formData.rooms}`;
-
         try {
-            const { error } = await supabase.from('leads').insert([{
-                name: formData.name,
-                phone: formData.phone,
-                email: formData.email,
-                message: message
-            }]);
-            if (error) throw error;
-            setStatus('success');
-            setFormData({ type: 'Maison', city: '', surface: '', rooms: '', name: '', phone: '', email: '' });
+            const response = await fetch("https://formsubmit.co/ajax/aubrypierre54260@gmail.com", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "Nouvelle demande d'ESTIMATION - Site Vanessa Tancredi",
+                    Type_de_bien: formData.type,
+                    Ville: formData.city,
+                    Surface: `${formData.surface} m²`,
+                    Pieces: formData.rooms,
+                    Nom_Client: formData.name,
+                    Telephone: formData.phone,
+                    Email: formData.email
+                })
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormData({ type: 'Maison', city: '', surface: '', rooms: '', name: '', phone: '', email: '' });
+            } else {
+                throw new Error('Erreur FormSubmit');
+            }
         } catch (error) {
             console.error(error);
             setStatus('error');

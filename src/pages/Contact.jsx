@@ -13,11 +13,27 @@ const Contact = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus('loading');
+
         try {
-            const { error } = await supabase.from('leads').insert([formData]);
-            if (error) throw error;
-            setStatus('success');
-            setFormData({ name: '', phone: '', email: '', message: '' });
+            const response = await fetch("https://formsubmit.co/ajax/aubrypierre54260@gmail.com", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    _subject: "Nouveau message de contact - Site Vanessa Tancredi",
+                    //_autoresponse: "Merci pour votre message, je reviens vers vous rapidement." 
+                })
+            });
+
+            if (response.ok) {
+                setStatus('success');
+                setFormData({ name: '', phone: '', email: '', message: '' });
+            } else {
+                throw new Error('Erreur FormSubmit');
+            }
         } catch (error) {
             console.error('Error submitting form:', error);
             setStatus('error');

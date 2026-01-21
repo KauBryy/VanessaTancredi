@@ -4,7 +4,7 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Check if we are in a "mock" environment (missing keys or placeholder)
-const isMock = !supabaseUrl || supabaseUrl.includes('placeholder') || !supabaseAnonKey;
+const isMock = !supabaseUrl || supabaseUrl.includes('placeholder') || supabaseUrl.includes('YOUR_SUPABASE_URL_HERE') || !supabaseAnonKey;
 
 export const supabase = isMock
     ? {

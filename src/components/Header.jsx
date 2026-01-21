@@ -14,7 +14,7 @@ const Header = () => {
     const isActive = (path) => currentPath === path ? 'text-[#002B5B]' : '';
 
     return (
-        <header className="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm font-sans">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-[100] shadow-sm font-sans">
             {/* Top Bar Contact */}
             <div className="bg-[#002B5B] text-white py-2 px-4">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-xs font-medium gap-2">
@@ -34,9 +34,9 @@ const Header = () => {
                 {/* Logo */}
                 <div
                     className="flex items-center gap-6 cursor-pointer"
-                    onClick={() => navigate('/')}
+                    onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
                 >
-                    <div className="border-r border-gray-200 pr-6 h-12 flex items-center">
+                    <div className="border-r border-gray-200 pr-6 h-20 flex items-center">
                         <img src={LOGO_URL} alt="Borbiconi Immobilier" className="h-full object-contain" />
                     </div>
                     <div className="hidden md:flex flex-col">
@@ -47,10 +47,10 @@ const Header = () => {
 
                 {/* Desktop Menu */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-bold text-gray-500 uppercase tracking-wide">
-                    <Link to="/" className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
-                    <Link to="/estimation" className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
-                    <Link to="/contact" className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
-                    <Button variant="secondary" onClick={() => navigate('/estimation')} className="py-2 px-4 text-xs shadow-none">
+                    <Link to="/" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
+                    <Link to="/estimation" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
+                    <Link to="/contact" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
+                    <Button variant="secondary" onClick={() => { navigate('/estimation'); window.scrollTo(0, 0); }} className="py-2 px-4 text-xs shadow-none">
                         Estimer mon bien
                     </Button>
                 </nav>
@@ -65,10 +65,10 @@ const Header = () => {
             {isMenuOpen && (
                 <div className="md:hidden bg-white border-t border-gray-100 p-4 absolute w-full shadow-xl">
                     <nav className="flex flex-col gap-4 text-sm font-bold text-gray-500 uppercase tracking-wide">
-                        <Link to="/" onClick={() => setIsMenuOpen(false)} className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
-                        <Link to="/estimation" onClick={() => setIsMenuOpen(false)} className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
-                        <Link to="/contact" onClick={() => setIsMenuOpen(false)} className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
-                        <Button variant="secondary" onClick={() => { navigate('/estimation'); setIsMenuOpen(false); }} className="w-full justify-center">
+                        <Link to="/" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
+                        <Link to="/estimation" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
+                        <Link to="/contact" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
+                        <Button variant="secondary" onClick={() => { navigate('/estimation'); setIsMenuOpen(false); window.scrollTo(0, 0); }} className="w-full justify-center">
                             Estimer mon bien
                         </Button>
                     </nav>

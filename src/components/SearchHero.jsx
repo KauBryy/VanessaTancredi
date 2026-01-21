@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Search, ArrowRight, Euro } from 'lucide-react';
 import Button from './ui/Button';
+import CitySelector from './CitySelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/hero_background_charme.png';
 
-const SearchHero = ({ activeType, setActiveType, activeCity, setActiveCity, activeBudget, setActiveBudget, cities }) => {
+const SearchHero = ({ activeType, setActiveType, activeCities, setActiveCities, activeBudget, setActiveBudget, cities, cityCounts, loading }) => {
     const [actionTab, setActionTab] = useState('buy'); // 'buy' or 'sell'
     const navigate = useNavigate();
 
     return (
-        <div className="relative h-[85vh] min-h-[700px] flex items-center justify-center overflow-hidden">
+        <div className="relative h-[85vh] min-h-[700px] flex items-center justify-center z-50">
             {/* Background Image Parallax Effect can be simpler here: Fixed BG */}
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed"
@@ -78,16 +79,16 @@ const SearchHero = ({ activeType, setActiveType, activeCity, setActiveCity, acti
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
                                     transition={{ duration: 0.3 }}
-                                    className="flex flex-col md:flex-row gap-6 items-end"
+                                    className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end w-full"
                                 >
-                                    <div className="flex-1 w-full text-left">
+                                    <div className="w-full text-left">
                                         <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Type de bien</label>
                                         <div className="relative group">
                                             <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
                                             <select
                                                 value={activeType}
                                                 onChange={(e) => setActiveType(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
+                                                className="w-full h-[58px] pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
                                             >
                                                 <option value="Tous">Tout voir</option>
                                                 <option value="Maison">Maison</option>
@@ -97,30 +98,18 @@ const SearchHero = ({ activeType, setActiveType, activeCity, setActiveCity, acti
                                         </div>
                                     </div>
 
-                                    <div className="flex-1 w-full text-left">
+                                    <div className="w-full text-left">
                                         <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Localisation</label>
-                                        <div className="relative group">
-                                            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
-                                            <select
-                                                value={activeCity}
-                                                onChange={(e) => setActiveCity(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
-                                            >
-                                                <option value="Toutes">Toutes les villes</option>
-                                                {cities.map(city => (
-                                                    <option key={city} value={city}>{city}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        <CitySelector selectedCities={activeCities} onChange={setActiveCities} cityCounts={cityCounts} loading={loading} />
                                     </div>
-                                    <div className="flex-1 w-full text-left">
+                                    <div className="w-full text-left">
                                         <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Budget Max</label>
                                         <div className="relative group">
                                             <Euro className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#C5A059] transition-colors" size={20} />
                                             <select
                                                 value={activeBudget}
                                                 onChange={(e) => setActiveBudget(e.target.value)}
-                                                className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
+                                                className="w-full h-[58px] pl-12 pr-4 bg-gray-50 border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-100"
                                             >
                                                 <option value="">Indifférent</option>
                                                 <option value="100000">100 000 €</option>
@@ -136,12 +125,7 @@ const SearchHero = ({ activeType, setActiveType, activeCity, setActiveCity, acti
                                         </div>
                                     </div>
 
-                                    <div className="w-full md:w-auto">
-                                        <Button className="w-full h-[58px] px-8 rounded-xl shadow-lg shadow-[#002B5B]/10 flex items-center justify-center gap-2 text-base font-bold tracking-wide hover:scale-[1.02] active:scale-[0.98] transition-transform">
-                                            <Search size={20} />
-                                            RECHERCHER
-                                        </Button>
-                                    </div>
+
                                 </motion.div>
                             ) : (
                                 <motion.div

@@ -40,7 +40,7 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#002B5B] focus:border-transparent outline-none"
-                            placeholder="vanessa@borbiconi.immo"
+                            placeholder="vanessa@scbi.eu"
                         />
                     </div>
                     <div>
