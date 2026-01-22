@@ -80,8 +80,8 @@ const PropertyDetail = () => {
                         <X size={32} />
                     </button>
 
-                    {/* Desktop Prev Button */}
-                    <button onClick={prevImage} className="hidden md:block absolute left-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
+                    {/* Prev Button (Desktop & Landscape Mobile) */}
+                    <button onClick={prevImage} className="hidden sm:block absolute left-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
                         <ChevronLeft size={48} />
                     </button>
 
@@ -89,12 +89,12 @@ const PropertyDetail = () => {
                     <img
                         src={currentImageSrc}
                         alt="Plein écran"
-                        className="max-w-full max-h-[65vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                        className="max-w-full max-h-[60vh] sm:max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     />
 
-                    {/* Mobile Controls (Below Image) */}
-                    <div className="md:hidden flex items-center justify-between gap-8 mt-6 z-[101]" onClick={(e) => e.stopPropagation()}>
+                    {/* Mobile Portrait Controls (Below Image) - Hidden on Landscape & Desktop */}
+                    <div className="sm:hidden flex items-center justify-between gap-8 mt-6 z-[101]" onClick={(e) => e.stopPropagation()}>
                         <button onClick={prevImage} className="p-3 text-white bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all">
                             <ChevronLeft size={28} />
                         </button>
@@ -108,13 +108,13 @@ const PropertyDetail = () => {
                         </button>
                     </div>
 
-                    {/* Desktop Next Button */}
-                    <button onClick={nextImage} className="hidden md:block absolute right-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
+                    {/* Next Button (Desktop & Landscape Mobile) */}
+                    <button onClick={nextImage} className="hidden sm:block absolute right-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
                         <ChevronRight size={48} />
                     </button>
 
-                    {/* Desktop Counter */}
-                    <div className="hidden md:block absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase">
+                    {/* Counter (Desktop & Landscape Mobile) */}
+                    <div className="hidden sm:block absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase">
                         {currentIndex + 1} / {allImages.length}
                     </div>
                 </div>
