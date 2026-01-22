@@ -71,7 +71,7 @@ const PropertyDetail = () => {
     if (!property) return <div className="p-20 text-center">Bien introuvable.</div>;
 
     return (
-        <div className="bg-[#F4F7FA] min-h-screen pb-20 font-sans relative">
+        <div className="bg-[#F4F7FA] min-h-screen pb-32 font-sans relative">
             {/* Lightbox Overlay */}
             {isLightboxOpen && (
                 <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
@@ -100,7 +100,7 @@ const PropertyDetail = () => {
                 </div>
             )}
 
-            <div className="bg-white border-b border-gray-200 py-4 px-4 sticky top-20 z-40 shadow-sm">
+            <div className="bg-white border-b border-gray-200 py-4 px-4 md:sticky md:top-32 z-40 shadow-sm">
                 <div className="max-w-7xl mx-auto flex items-center gap-2 text-sm text-gray-500">
                     <span className="cursor-pointer hover:text-[#002B5B]" onClick={() => navigate('/')}>Accueil</span>
                     <ChevronRight size={14} />

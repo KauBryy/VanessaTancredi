@@ -31,13 +31,13 @@ const Header = () => {
             </div>
 
             {/* Navigation */}
-            <div className="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+            <div className="max-w-7xl mx-auto px-4 h-16 md:h-24 flex items-center justify-between">
                 {/* Logo */}
                 <div
                     className="flex items-center gap-6 cursor-pointer"
                     onClick={() => { navigate('/'); window.scrollTo(0, 0); }}
                 >
-                    <div className="border-r border-gray-200 pr-6 h-20 flex items-center">
+                    <div className="border-r border-gray-200 pr-6 h-12 md:h-20 flex items-center">
                         <img src={LOGO_URL} alt="Borbiconi Immobilier" className="h-full object-contain" />
                     </div>
                     <div className="hidden md:flex flex-col">
