@@ -205,7 +205,7 @@ const PropertyDetail = () => {
                             </div>
 
                             <h3 className="font-bold text-xl mb-4 text-[#002B5B]">Description</h3>
-                            <p className="text-gray-600 leading-loose mb-10 text-justify text-lg whitespace-pre-line">
+                            <p className="text-gray-600 leading-loose mb-10 text-left md:text-justify text-base md:text-lg whitespace-pre-line">
                                 {property.description}
                             </p>
 
