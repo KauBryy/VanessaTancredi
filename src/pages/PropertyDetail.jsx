@@ -229,21 +229,21 @@ const PropertyDetail = () => {
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-3 gap-4 mb-10">
-                                <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
-                                    <HomeIcon size={24} className="mx-auto text-[#C5A059] mb-2" />
-                                    <span className="block text-xl font-black text-[#002B5B]">{property.type}</span>
-                                    <span className="text-xs text-gray-400 uppercase font-bold">Type</span>
+                            <div className="grid grid-cols-3 gap-2 md:gap-4 mb-10">
+                                <div className="text-center p-2 md:p-6 bg-[#F4F7FA] rounded-xl md:rounded-2xl">
+                                    <HomeIcon size={20} className="mx-auto text-[#C5A059] mb-1 md:mb-2 md:w-6 md:h-6" />
+                                    <span className="block text-sm md:text-xl font-black text-[#002B5B] break-words">{property.type}</span>
+                                    <span className="text-[10px] md:text-xs text-gray-400 uppercase font-bold">Type</span>
                                 </div>
-                                <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
-                                    <Maximize2 size={24} className="mx-auto text-[#C5A059] mb-2" />
-                                    <span className="block text-xl font-black text-[#002B5B]">{property.surface} m²</span>
-                                    <span className="text-xs text-gray-400 uppercase font-bold">Surface</span>
+                                <div className="text-center p-2 md:p-6 bg-[#F4F7FA] rounded-xl md:rounded-2xl">
+                                    <Maximize2 size={20} className="mx-auto text-[#C5A059] mb-1 md:mb-2 md:w-6 md:h-6" />
+                                    <span className="block text-sm md:text-xl font-black text-[#002B5B]">{property.surface} m²</span>
+                                    <span className="text-[10px] md:text-xs text-gray-400 uppercase font-bold">Surface</span>
                                 </div>
-                                <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
-                                    <BedDouble size={24} className="mx-auto text-[#C5A059] mb-2" />
-                                    <span className="block text-xl font-black text-[#002B5B]">{property.rooms || '-'}</span>
-                                    <span className="text-xs text-gray-400 uppercase font-bold">Chambres</span>
+                                <div className="text-center p-2 md:p-6 bg-[#F4F7FA] rounded-xl md:rounded-2xl">
+                                    <BedDouble size={20} className="mx-auto text-[#C5A059] mb-1 md:mb-2 md:w-6 md:h-6" />
+                                    <span className="block text-sm md:text-xl font-black text-[#002B5B]">{property.rooms || '-'}</span>
+                                    <span className="text-[10px] md:text-xs text-gray-400 uppercase font-bold">Chambres</span>
                                 </div>
                             </div>
 
