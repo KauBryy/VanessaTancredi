@@ -8,7 +8,7 @@ const FixedMobileContact = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 pointer-events-none">
+        <div className="sm:hidden fixed bottom-6 left-4 right-4 z-50 pointer-events-none">
             <div className="bg-white/60 backdrop-blur-2xl border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.1)] rounded-2xl p-2 flex gap-2 pointer-events-auto overflow-hidden ring-1 ring-white/50">
                 {/* Bouton Appeler - Style Sombre & Luxueux */}
                 <motion.a
