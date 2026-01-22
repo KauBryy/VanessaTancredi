@@ -74,27 +74,47 @@ const PropertyDetail = () => {
         <div className="bg-[#F4F7FA] min-h-screen pb-20 font-sans relative">
             {/* Lightbox Overlay */}
             {isLightboxOpen && (
-                <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
-                    <button onClick={() => setIsLightboxOpen(false)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2">
+                <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col md:flex-row items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
+                    {/* Close Button */}
+                    <button onClick={() => setIsLightboxOpen(false)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2 z-[101]">
                         <X size={32} />
                     </button>
 
-                    <button onClick={prevImage} className="absolute left-2 md:left-6 text-white hover:text-white/80 transition-colors p-2 md:p-4 bg-black/20 md:bg-transparent rounded-full md:rounded-none backdrop-blur-sm md:backdrop-blur-none" aria-label="Précédent">
-                        <ChevronLeft size={32} className="md:w-12 md:h-12" />
+                    {/* Desktop Prev Button */}
+                    <button onClick={prevImage} className="hidden md:block absolute left-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
+                        <ChevronLeft size={48} />
                     </button>
 
+                    {/* Image */}
                     <img
                         src={currentImageSrc}
                         alt="Plein écran"
-                        className="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                        className="max-w-full max-h-[65vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     />
 
-                    <button onClick={nextImage} className="absolute right-2 md:right-6 text-white hover:text-white/80 transition-colors p-2 md:p-4 bg-black/20 md:bg-transparent rounded-full md:rounded-none backdrop-blur-sm md:backdrop-blur-none" aria-label="Suivant">
-                        <ChevronRight size={32} className="md:w-12 md:h-12" />
+                    {/* Mobile Controls (Below Image) */}
+                    <div className="md:hidden flex items-center justify-between gap-8 mt-6 z-[101]" onClick={(e) => e.stopPropagation()}>
+                        <button onClick={prevImage} className="p-3 text-white bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all">
+                            <ChevronLeft size={28} />
+                        </button>
+
+                        <span className="text-white/80 font-medium tracking-widest text-sm">
+                            {currentIndex + 1} / {allImages.length}
+                        </span>
+
+                        <button onClick={nextImage} className="p-3 text-white bg-white/10 rounded-full hover:bg-white/20 active:scale-95 transition-all">
+                            <ChevronRight size={28} />
+                        </button>
+                    </div>
+
+                    {/* Desktop Next Button */}
+                    <button onClick={nextImage} className="hidden md:block absolute right-6 text-white/50 hover:text-white transition-colors p-4 z-[101]">
+                        <ChevronRight size={48} />
                     </button>
 
-                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase">
+                    {/* Desktop Counter */}
+                    <div className="hidden md:block absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase">
                         {currentIndex + 1} / {allImages.length}
                     </div>
                 </div>
