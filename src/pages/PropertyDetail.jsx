@@ -79,19 +79,19 @@ const PropertyDetail = () => {
                         <X size={32} />
                     </button>
 
-                    <button onClick={prevImage} className="absolute left-6 text-white/50 hover:text-white transition-colors p-4 hidden md:block">
-                        <ChevronLeft size={48} />
+                    <button onClick={prevImage} className="absolute left-2 md:left-6 text-white hover:text-white/80 transition-colors p-2 md:p-4 bg-black/20 md:bg-transparent rounded-full md:rounded-none backdrop-blur-sm md:backdrop-blur-none" aria-label="Précédent">
+                        <ChevronLeft size={32} className="md:w-12 md:h-12" />
                     </button>
 
                     <img
                         src={currentImageSrc}
                         alt="Plein écran"
-                        className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+                        className="max-w-full max-h-[85vh] md:max-h-[90vh] object-contain rounded-lg shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     />
 
-                    <button onClick={nextImage} className="absolute right-6 text-white/50 hover:text-white transition-colors p-4 hidden md:block">
-                        <ChevronRight size={48} />
+                    <button onClick={nextImage} className="absolute right-2 md:right-6 text-white hover:text-white/80 transition-colors p-2 md:p-4 bg-black/20 md:bg-transparent rounded-full md:rounded-none backdrop-blur-sm md:backdrop-blur-none" aria-label="Suivant">
+                        <ChevronRight size={32} className="md:w-12 md:h-12" />
                     </button>
 
                     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-sm font-medium tracking-widest uppercase">
