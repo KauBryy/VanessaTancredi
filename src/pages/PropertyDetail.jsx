@@ -31,16 +31,39 @@ const PropertyDetail = () => {
         setSelectedImage(allImages[prevIdx]);
     };
 
+    const openLightbox = () => {
+        setIsLightboxOpen(true);
+        // Tentative de passage en plein écran (cache la barre d'adresse sur Android/PC)
+        try {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) elem.requestFullscreen().catch(() => { });
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen(); // Safari
+        } catch (e) {
+            // Ignorer les erreurs si le navigateur refuse
+        }
+    };
+
+    const closeLightbox = () => {
+        setIsLightboxOpen(false);
+        // Sortie du plein écran
+        try {
+            if (document.exitFullscreen) document.exitFullscreen().catch(() => { });
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        } catch (e) {
+            // Ignorer
+        }
+    };
+
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (!isLightboxOpen) return;
-            if (e.key === 'Escape') setIsLightboxOpen(false);
+            if (e.key === 'Escape') closeLightbox();
             if (e.key === 'ArrowRight') nextImage();
             if (e.key === 'ArrowLeft') prevImage();
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isLightboxOpen, currentIndex, allImages.length]); // added dep
+    }, [isLightboxOpen, currentIndex, allImages.length]);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -74,9 +97,9 @@ const PropertyDetail = () => {
         <div className="bg-[#F4F7FA] min-h-screen pb-20 font-sans relative">
             {/* Lightbox Overlay */}
             {isLightboxOpen && (
-                <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col md:flex-row items-center justify-center p-4 backdrop-blur-sm" onClick={() => setIsLightboxOpen(false)}>
+                <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col md:flex-row items-center justify-center p-4 backdrop-blur-sm" onClick={closeLightbox}>
                     {/* Close Button */}
-                    <button onClick={() => setIsLightboxOpen(false)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2 z-[101]">
+                    <button onClick={closeLightbox} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors p-2 z-[101]">
                         <X size={32} />
                     </button>
 
@@ -137,7 +160,7 @@ const PropertyDetail = () => {
                             {/* Main Image */}
                             <div
                                 className="relative aspect-video rounded-xl overflow-hidden mb-2 bg-gray-100 cursor-pointer group"
-                                onClick={() => setIsLightboxOpen(true)}
+                                onClick={openLightbox}
                             >
                                 <img
                                     src={selectedImage || property.image_url || property.image}
