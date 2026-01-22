@@ -18,7 +18,7 @@ import ScrollToTop from './components/ScrollToTop';
 
 function Layout() {
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen w-full max-w-[100vw] overflow-x-hidden">
             <Header />
             <main className="flex-grow">
                 <Outlet />
