@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Maximize2, Home, ArrowRight, Heart } from 'lucide-react';
+import { MapPin, Maximize2, Home, ArrowRight, Bed } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatPrice } from '../constants';
 
@@ -24,16 +24,19 @@ const PropertyCard = ({ property, onClick }) => (
 
             {/* Badges */}
             <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+
+                {/* Sale/Rent Badge */}
                 <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.status === 'Location' ? 'bg-[#C5A059]/90' : 'bg-[#002B5B]/90'}`}>
-                    {property.status}
+                    {property.status === 'Location' ? 'Location' : 'Vente'}
                 </span>
+
                 {/* Marketing Status Badge */}
                 {property.marketing_status && property.marketing_status !== 'Disponible' && (
                     <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md
                         ${['Nouveauté', 'Baisse de prix'].includes(property.marketing_status) ? 'bg-[#C5A059]/90' : ''}
                         ${property.marketing_status === 'Exclusivité' ? 'bg-[#002B5B]/90' : ''}
                         ${property.marketing_status.includes('Sous') ? 'bg-orange-600/90' : ''}
-                        ${['Vendu', 'Loué'].includes(property.marketing_status) ? 'bg-red-600/90' : ''}
+                        ${property.marketing_status === 'Vendu' ? 'bg-red-600/90' : ''}
                     `}>
                         {property.marketing_status}
                     </span>
@@ -48,11 +51,7 @@ const PropertyCard = ({ property, onClick }) => (
                 )}
             </div>
 
-            <div className="absolute top-12 right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-4 group-hover:translate-x-0">
-                <button className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white hover:text-red-500 transition-colors shadow-lg">
-                    <Heart size={20} />
-                </button>
-            </div>
+
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#002B5B]/90 via-[#002B5B]/60 to-transparent p-6 pt-12 flex items-end justify-between text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 z-10">
                 <div className="flex items-center gap-2 text-sm font-medium tracking-wide">
@@ -87,14 +86,18 @@ const PropertyCard = ({ property, onClick }) => (
             )}
 
             {/* Caractéristiques Styled */}
-            <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-gray-100">
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <div className="p-1.5 bg-[#F4F7FA] rounded-md text-[#002B5B]"><Maximize2 size={16} /></div>
-                    <span className="font-semibold">{property.surface} m²</span>
+            <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-gray-100">
+                <div className="flex flex-col items-center justify-center p-2 bg-[#F4F7FA] rounded-lg">
+                    <Home size={16} className="text-[#002B5B] mb-1" />
+                    <span className="text-xs font-bold text-gray-600 truncate w-full text-center">{property.type}</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <div className="p-1.5 bg-[#F4F7FA] rounded-md text-[#002B5B]"><Home size={16} /></div>
-                    <span className="font-semibold">{property.type}</span>
+                <div className="flex flex-col items-center justify-center p-2 bg-[#F4F7FA] rounded-lg">
+                    <Maximize2 size={16} className="text-[#002B5B] mb-1" />
+                    <span className="text-xs font-bold text-gray-600">{property.surface} m²</span>
+                </div>
+                <div className="flex flex-col items-center justify-center p-2 bg-[#F4F7FA] rounded-lg">
+                    <Bed size={16} className="text-[#002B5B] mb-1" />
+                    <span className="text-xs font-bold text-gray-600">{property.rooms} ch.</span>
                 </div>
             </div>
 
@@ -103,7 +106,7 @@ const PropertyCard = ({ property, onClick }) => (
                 <div>
                     <p className="text-xs text-gray-400 uppercase font-bold mb-0.5">Prix</p>
                     <div className="text-2xl font-display font-black text-[#002B5B]">
-                        {formatPrice(property.price, property.status === 'Location')}
+                        {formatPrice(property.price)} {property.status === 'Location' && <span className="text-sm font-medium text-gray-500">/mois</span>}
                     </div>
                 </div>
 

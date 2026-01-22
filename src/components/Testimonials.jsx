@@ -30,7 +30,7 @@ const Testimonials = () => {
         if (!isHovered && contentWidth > 0) {
             // Speed of scroll. Adjust multiplier for speed.
             // .05 is very slow. 
-            const moveBy = -0.5 * (delta / 16);
+            const moveBy = -0.6 * (delta / 16);
             let newX = x.get() + moveBy;
 
             // Wrap logic
@@ -93,7 +93,7 @@ const Testimonials = () => {
                         transition={{ delay: 0.1 }}
                         className="text-4xl md:text-5xl font-display font-bold text-[#002B5B] mb-6"
                     >
-                        La satisfaction de nos clients
+                        La satisfaction de mes clients
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}

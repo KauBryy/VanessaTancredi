@@ -1,29 +1,39 @@
 import React from 'react';
-import { Phone, TrendingUp, MessageCircle } from 'lucide-react';
+import { Phone, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { AGENT_INFO } from '../constants';
 
 const FixedMobileContact = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-100 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] px-4 py-3 flex gap-3 h-20 items-center supports-[padding-bottom:env(safe-area-inset-bottom)]:pb-[env(safe-area-inset-bottom)] supports-[padding-bottom:env(safe-area-inset-bottom)]:h-auto">
-            <a
-                href={`tel:${AGENT_INFO.phone.replace(/\s/g, '')}`}
-                className="flex-1 flex flex-col items-center justify-center gap-1 bg-gray-50 active:bg-gray-100 text-[#002B5B] rounded-xl py-2 transition-colors"
-                aria-label="Appeler"
-            >
-                <Phone size={20} />
-                <span className="text-xs font-bold">Appeler</span>
-            </a>
+        <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 pointer-events-none">
+            <div className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12)] rounded-2xl p-2 flex gap-2 pointer-events-auto overflow-hidden">
+                {/* Bouton Appeler - Style Sombre & Luxueux */}
+                <motion.a
+                    whileTap={{ scale: 0.95 }}
+                    href={`tel:${AGENT_INFO.phone.replace(/\s/g, '')}`}
+                    className="flex-[0.35] flex items-center justify-center bg-gradient-to-br from-[#003B7B] to-[#001B3B] text-white rounded-xl py-4 border border-white/5 shadow-lg shadow-[#002B5B]/20 relative overflow-hidden group"
+                    aria-label="Appeler"
+                >
+                    <div className="absolute inset-0 bg-white/5 opacity-0 group-active:opacity-100 transition-opacity"></div>
+                    <Phone size={20} className="relative z-10" />
+                </motion.a>
 
-            <button
-                onClick={() => navigate('/estimation')}
-                className="flex-1 flex flex-col items-center justify-center gap-1 bg-[#002B5B] active:bg-[#001F44] text-white rounded-xl py-2 shadow-lg shadow-blue-900/20 transition-colors"
-            >
-                <TrendingUp size={20} />
-                <span className="text-xs font-bold">Estimer</span>
-            </button>
+                {/* Bouton Estimer - Style Premium Doré */}
+                <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                        navigate('/estimation');
+                        window.scrollTo(0, 0);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-3 bg-gradient-to-r from-[#C5A059] to-[#D4B475] text-white rounded-xl py-4 shadow-lg shadow-[#C5A059]/30 transition-all font-bold tracking-wide uppercase text-sm"
+                >
+                    <TrendingUp size={18} />
+                    <span>Estimer mon bien</span>
+                </motion.button>
+            </div>
         </div>
     );
 };

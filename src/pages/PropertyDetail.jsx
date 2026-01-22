@@ -164,9 +164,12 @@ const PropertyDetail = () => {
                                 </div>
                                 <div className="text-right">
                                     <div className="text-3xl font-black text-[#002B5B]">
-                                        {formatPrice(property.price, property.status === 'Location')}
+                                        {formatPrice(property.price)} {property.status === 'Location' && <span className="text-lg font-medium text-gray-500">/mois</span>}
                                     </div>
                                     <div className="flex flex-col items-end gap-2 mt-2">
+                                        <span className={`inline-block text-white text-xs font-bold px-3 py-1 uppercase rounded-full shadow-md ${property.status === 'Location' ? 'bg-[#C5A059]' : 'bg-[#002B5B]'}`}>
+                                            {property.status === 'Location' ? 'Location' : 'Vente'}
+                                        </span>
                                         {property.marketing_status && property.marketing_status !== 'Disponible' && (
                                             <span className={`inline-block text-white text-xs font-bold px-3 py-1 uppercase rounded-full shadow-md
                                                 ${['Nouveauté', 'Baisse de prix'].includes(property.marketing_status) ? 'bg-[#C5A059]' : ''}
@@ -177,21 +180,21 @@ const PropertyDetail = () => {
                                                 {property.marketing_status}
                                             </span>
                                         )}
-                                        <div className="inline-block bg-gray-100 text-gray-500 text-xs font-bold px-3 py-1 uppercase rounded-full border border-gray-200">{property.status}</div>
+
                                     </div>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-3 gap-4 mb-10">
                                 <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
-                                    <Maximize2 size={24} className="mx-auto text-[#C5A059] mb-2" />
-                                    <span className="block text-xl font-black text-[#002B5B]">{property.surface} m²</span>
-                                    <span className="text-xs text-gray-400 uppercase font-bold">Surface</span>
-                                </div>
-                                <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
                                     <HomeIcon size={24} className="mx-auto text-[#C5A059] mb-2" />
                                     <span className="block text-xl font-black text-[#002B5B]">{property.type}</span>
                                     <span className="text-xs text-gray-400 uppercase font-bold">Type</span>
+                                </div>
+                                <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
+                                    <Maximize2 size={24} className="mx-auto text-[#C5A059] mb-2" />
+                                    <span className="block text-xl font-black text-[#002B5B]">{property.surface} m²</span>
+                                    <span className="text-xs text-gray-400 uppercase font-bold">Surface</span>
                                 </div>
                                 <div className="text-center p-6 bg-[#F4F7FA] rounded-2xl">
                                     <BedDouble size={24} className="mx-auto text-[#C5A059] mb-2" />
@@ -204,6 +207,86 @@ const PropertyDetail = () => {
                             <p className="text-gray-600 leading-loose mb-10 text-justify text-lg whitespace-pre-line">
                                 {property.description}
                             </p>
+
+                            <h3 className="font-bold text-xl mb-4 text-[#002B5B]">Performance Énergétique</h3>
+                            <div className="grid md:grid-cols-2 gap-8 mb-10">
+                                {/* DPE Energie */}
+                                <div className="bg-[#F4F7FA] p-6 rounded-2xl">
+                                    <h4 className="font-bold text-sm text-[#002B5B] uppercase mb-4 flex justify-between">
+                                        Consommation Énergie
+                                        <span className={`px-2 py-0.5 rounded text-white text-xs ${property.dpe_energy === 'A' ? 'bg-green-500' : property.dpe_energy === 'B' ? 'bg-green-400' : property.dpe_energy === 'C' ? 'bg-lime-300' : 'bg-gray-400'}`}>
+                                            {property.dpe_energy || '-'}
+                                        </span>
+                                    </h4>
+                                    <div className="space-y-1">
+                                        {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map((letter, i) => (
+                                            <div key={letter} className="relative h-6 flex items-center">
+                                                {/* Barre colorée */}
+                                                <div
+                                                    className={`h-full rounded-r-md flex items-center px-2 text-[10px] font-bold text-white/90 shadow-sm
+                                                    ${letter === 'A' ? 'w-[30%] bg-green-600' : ''}
+                                                    ${letter === 'B' ? 'w-[40%] bg-green-500' : ''}
+                                                    ${letter === 'C' ? 'w-[50%] bg-lime-400' : ''}
+                                                    ${letter === 'D' ? 'w-[60%] bg-yellow-400' : ''}
+                                                    ${letter === 'E' ? 'w-[70%] bg-orange-400' : ''}
+                                                    ${letter === 'F' ? 'w-[80%] bg-orange-600' : ''}
+                                                    ${letter === 'G' ? 'w-[90%] bg-red-600' : ''}
+                                                    `}
+                                                >
+                                                    {letter}
+                                                </div>
+
+                                                {/* Flèche indicatrice si match */}
+                                                {property.dpe_energy === letter && (
+                                                    <div className="absolute left-[92%] ml-2 flex items-center">
+                                                        <div className="w-0 h-0 border-y-[6px] border-y-transparent border-r-[10px] border-r-black mr-1 rotate-180"></div>
+                                                        <span className="font-black text-xl text-black">{letter}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* GES Climat (affiché seulement si renseigné) */}
+                                {property.dpe_ges && (
+                                    <div className="bg-[#F4F7FA] p-6 rounded-2xl">
+                                        <h4 className="font-bold text-sm text-[#002B5B] uppercase mb-4 flex justify-between">
+                                            Émissions GES
+                                            <span className={`px-2 py-0.5 rounded text-white text-xs ${property.dpe_ges === 'A' ? 'bg-purple-200 text-purple-800' : 'bg-gray-300'}`}>
+                                                {property.dpe_ges || '-'}
+                                            </span>
+                                        </h4>
+                                        <div className="space-y-1">
+                                            {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map((letter, i) => (
+                                                <div key={letter} className="relative h-6 flex items-center">
+                                                    <div
+                                                        className={`h-full rounded-r-md flex items-center px-2 text-[10px] font-bold text-white/90 shadow-sm
+                                                        ${letter === 'A' ? 'w-[30%] bg-[#E5D7F1]' : ''}
+                                                        ${letter === 'B' ? 'w-[40%] bg-[#D0BFE5]' : ''}
+                                                        ${letter === 'C' ? 'w-[50%] bg-[#BCA8D9]' : ''}
+                                                        ${letter === 'D' ? 'w-[60%] bg-[#A890CD]' : ''}
+                                                        ${letter === 'E' ? 'w-[70%] bg-[#9379C1]' : ''}
+                                                        ${letter === 'F' ? 'w-[80%] bg-[#7F61B5]' : ''}
+                                                        ${letter === 'G' ? 'w-[90%] bg-[#6B4AA9]' : ''}
+                                                        `}
+                                                    >
+                                                        {letter}
+                                                    </div>
+
+                                                    {/* Flèche indicatrice si match */}
+                                                    {property.dpe_ges === letter && (
+                                                        <div className="absolute left-[92%] ml-2 flex items-center">
+                                                            <div className="w-0 h-0 border-y-[6px] border-y-transparent border-r-[10px] border-r-black mr-1 rotate-180"></div>
+                                                            <span className="font-black text-xl text-black">{letter}</span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
 
                             <h3 className="font-bold text-xl mb-4 text-[#002B5B]">Les plus</h3>
                             <div className="grid grid-cols-2 gap-4">
@@ -219,7 +302,7 @@ const PropertyDetail = () => {
                     <div className="space-y-6">
                         <div className="bg-white p-8 shadow-xl rounded-2xl sticky top-36 border-t-4 border-[#002B5B]">
                             <div className="flex items-center gap-4 mb-8">
-                                <img src={AGENT_INFO.photo} className="w-20 h-20 rounded-full object-cover border-4 border-[#F4F7FA]" alt="Agent" />
+                                <img src={AGENT_INFO.photo} className="w-16 h-16 rounded-full object-cover border-4 border-[#F4F7FA]" alt="Agent" />
                                 <div>
                                     <p className="font-black text-[#002B5B] text-xl">{AGENT_INFO.name}</p>
                                     <p className="text-xs text-[#C5A059] font-bold uppercase tracking-wide">{AGENT_INFO.role}</p>

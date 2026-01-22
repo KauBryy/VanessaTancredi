@@ -49,7 +49,6 @@ const Header = () => {
                 {/* Desktop Menu */}
                 <nav className="hidden md:flex items-center gap-8 text-sm font-bold text-gray-500 uppercase tracking-wide">
                     <Link to="/" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/')}`}>Biens</Link>
-                    <Link to="/estimation" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/estimation')}`}>Estimation</Link>
                     <Link to="/contact" onClick={() => window.scrollTo(0, 0)} className={`hover:text-[#002B5B] transition-colors ${isActive('/contact')}`}>Contact</Link>
                     <Button variant="secondary" onClick={() => { navigate('/estimation'); window.scrollTo(0, 0); }} className="py-2 px-4 text-xs shadow-none">
                         Estimer mon bien
@@ -92,9 +91,6 @@ const Header = () => {
                             <nav className="flex flex-col gap-6 text-xl font-bold text-[#002B5B] uppercase tracking-wide">
                                 <Link to="/" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
                                     Biens
-                                </Link>
-                                <Link to="/estimation" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
-                                    Estimation
                                 </Link>
                                 <Link to="/contact" onClick={() => { setIsMenuOpen(false); window.scrollTo(0, 0); }} className="hover:text-[#C5A059] transition-colors flex items-center gap-4 border-b border-gray-50 pb-4">
                                     Contact

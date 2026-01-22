@@ -1,5 +1,6 @@
 import vanessaPhoto from './assets/photo_vanessa.jpg';
 import vanessaLogo from './assets/logo_vanessa.png';
+import agencySeal from './assets/logo_agence_round.png';
 
 export const COLORS = {
     primary: '#002B5B', // Bleu Borbiconi Profond
@@ -22,8 +23,8 @@ export const AGENT_INFO = {
 };
 
 export const LOGO_URL = vanessaLogo;
+export const AGENCY_SEAL = agencySeal;
 
-export const formatPrice = (price, isRent) => {
-    const formatted = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
-    return isRent ? `${formatted} / mois` : formatted;
+export const formatPrice = (price) => {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(price);
 };

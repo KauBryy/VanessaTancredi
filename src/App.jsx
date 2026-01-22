@@ -7,6 +7,7 @@ import PropertyDetail from './pages/PropertyDetail';
 import Contact from './pages/Contact';
 import Estimation from './pages/Estimation';
 import Fees from './pages/Fees';
+import Legal from './pages/Legal';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import PropertyForm from './pages/admin/PropertyForm';
@@ -41,6 +42,7 @@ function App() {
                     <Route path="contact" element={<Contact />} />
                     <Route path="estimation" element={<Estimation />} />
                     <Route path="honoraires" element={<Fees />} />
+                    <Route path="mentions-legales" element={<Legal />} />
                 </Route>
 
                 {/* Admin Routes */}

@@ -16,7 +16,10 @@ create table public.properties (
   description text,
   image_url text,
   images text[], -- Array of image URLs (gallery)
-  features text[] -- Array of strings
+  features text[], -- Array of strings
+  marketing_status text default 'Disponible', -- 'Nouveauté', 'Exclusivité', 'Sous Offre', 'Vendu'
+  dpe_energy text, -- 'A' to 'G'
+  dpe_ges text -- 'A' to 'G'
 );
 
 -- Enable RLS

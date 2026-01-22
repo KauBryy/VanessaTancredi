@@ -25,7 +25,11 @@ const PropertyForm = () => {
         description: '',
         image_url: '',
         images: [], // Gallery
-        features: ''
+        image_url: '',
+        images: [], // Gallery
+        features: '',
+        dpe_energy: '', // A-G
+        dpe_ges: '' // A-G
     });
 
     // Fetch data if edit mode
@@ -114,7 +118,7 @@ const PropertyForm = () => {
             navigate('/admin');
         } catch (error) {
             console.error('Error saving property:', error);
-            alert('Erreur lors de la sauvegarde.');
+            alert(`Erreur lors de la sauvegarde : ${error.message || error.details || JSON.stringify(error)}`);
         } finally {
             setLoading(false);
         }
@@ -245,21 +249,17 @@ const PropertyForm = () => {
                             <option>Local Commercial</option>
                         </select>
                     </div>
-                    <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold text-gray-500 uppercase">Type de Transaction</label>
-                            <div className="flex gap-4 p-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="status" value="Vente" checked={formData.status === 'Vente'} onChange={handleChange} className="accent-[#002B5B] w-5 h-5" />
-                                    <span className={`font-bold ${formData.status === 'Vente' ? 'text-[#002B5B]' : 'text-gray-400'}`}>Vente</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" name="status" value="Location" checked={formData.status === 'Location'} onChange={handleChange} className="accent-[#C5A059] w-5 h-5" />
-                                    <span className={`font-bold ${formData.status === 'Location' ? 'text-[#C5A059]' : 'text-gray-400'}`}>Location</span>
-                                </label>
-                            </div>
-                        </div>
+                    <div className="space-y-2">
+                        <label className="text-xs font-bold text-gray-500 uppercase">Type d'offre</label>
+                        <select name="status" value={formData.status} onChange={handleChange} className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:border-[#002B5B] bg-white">
+                            <option value="Vente">Vente</option>
+                            <option value="Location">Location</option>
+                        </select>
+                    </div>
+                </div>
 
+                <div className="grid md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
                         <div>
                             <label className="text-xs font-bold text-gray-500 uppercase">Statut Commercial (Bandeau)</label>
                             <select
@@ -274,8 +274,30 @@ const PropertyForm = () => {
                                 <option value="Sous Offre">🤝 Sous Offre</option>
                                 <option value="Sous Compromis">📝 Sous Compromis</option>
                                 <option value="Vendu">🥂 Vendu</option>
-                                <option value="Loué">🔑 Loué</option>
+
                                 <option value="Baisse de prix">📉 Baisse de prix</option>
+                                <option value="Loué">🤝 Loué (Location)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-8">
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">DPE (Énergie)</label>
+                            <select name="dpe_energy" value={formData.dpe_energy} onChange={handleChange} className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:border-[#002B5B] bg-white">
+                                <option value="">Non renseigné</option>
+                                {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(l => (
+                                    <option key={l} value={l}>Classe {l}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold text-gray-500 uppercase">GES (Climat)</label>
+                            <select name="dpe_ges" value={formData.dpe_ges} onChange={handleChange} className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:border-[#002B5B] bg-white">
+                                <option value="">Non renseigné</option>
+                                {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map(l => (
+                                    <option key={l} value={l}>Classe {l}</option>
+                                ))}
                             </select>
                         </div>
                     </div>
@@ -287,44 +309,98 @@ const PropertyForm = () => {
                         <button
                             type="button"
                             onClick={() => {
-                                const desc = formData.description.toLowerCase();
+                                const desc = formData.description; // Keep case for some checks
+                                const descLower = desc.toLowerCase();
                                 const newUpdates = {};
                                 let detectedFeatures = [...(formData.features ? formData.features.split(',').map(f => f.trim()).filter(f => f) : [])];
 
                                 // 1. Detect Surface
-                                const surfaceMatch = desc.match(/(\d+)(?:[.,]\d+)?\s*m[2²]/);
-                                if (surfaceMatch && !formData.surface) newUpdates.surface = surfaceMatch[1];
+                                const surfaceMatch = descLower.match(/(\d+(?:[.,]\d+)?)\s*m[2²]/);
+                                if (surfaceMatch && !formData.surface) newUpdates.surface = surfaceMatch[1].replace(',', '.');
 
-                                // 2. Detect Rooms (Smart Sum)
-                                // Looks for "3 chambres" or distinct mentions like "1 chambre... 2 chambres"
-                                const roomMatches = [...desc.matchAll(/(\d+)\s*chambre/g)];
+                                // 2. Detect Rooms
+                                const roomMatches = [...descLower.matchAll(/(\d+)\s*chambre/g)];
                                 let totalRooms = 0;
                                 if (roomMatches.length > 0) {
                                     roomMatches.forEach(m => totalRooms += parseInt(m[1]));
                                 }
-                                // Fallback: look for written numbers "une chambre", "deux chambres", etc? complicated for regex, let's stick to digits or check total mention "3 chambres"
-                                if (totalRooms === 0 && desc.includes('chambre')) totalRooms = 1; // Default if mentioned but no number
-
-                                // Specific logic for user example: "1 chambre" ... "2 chambres" -> sum is correct with loop above.
+                                if (totalRooms === 0 && descLower.includes('chambre')) totalRooms = 1;
                                 if (totalRooms > 0 && !formData.rooms) newUpdates.rooms = totalRooms;
 
-                                // 3. Detect Features
+                                // 3. Detect Price
+                                const priceMatch = desc.match(/(\d[\d\s]*)(?:€|euros)/i);
+                                if (priceMatch && !formData.price) {
+                                    newUpdates.price = priceMatch[1].replace(/\s/g, '');
+                                }
+
+                                // 4. Detect Type (Fix false positives for 'commercial')
+                                // We check specific keywords. We prioritize specific types.
+                                // "Local Commercial" is only detected if 'local commercial' is found explicitly, or 'bureau'
+                                // We ignore 'commercial' alone because of 'agent commercial'
+                                if (descLower.includes('appartement') || descLower.includes('studio') || descLower.includes('f2') || descLower.includes('f3')) newUpdates.type = 'Appartement';
+                                else if (descLower.includes('terrain') || descLower.includes('parcelle')) newUpdates.type = 'Terrain';
+                                else if (descLower.includes('immeuble')) newUpdates.type = 'Immeuble';
+                                else if (descLower.includes('local commercial') || descLower.includes('bureau') || descLower.includes('fonds de commerce')) newUpdates.type = 'Local Commercial';
+                                else if (descLower.includes('maison') || descLower.includes('pavillon') || descLower.includes('villa') || descLower.includes('fermette')) newUpdates.type = 'Maison';
+
+                                // 5. Detect City (Priority to first mention in text)
+                                const localCities = [
+                                    'Longwy', 'Longuyon', 'Mercy-le-Bas', 'Villerupt', 'Audun-le-Roman', 'Piennes',
+                                    'Bouligny', 'Boulange', 'Aumetz', 'Herserange', 'Lexy', 'Réhon', 'Mont-Saint-Martin',
+                                    'Gorcy', 'Cosnes-et-Romain', 'Haucourt-Moulaine', 'Saulnes', 'Ugny', 'Doncourt',
+                                    'Baslieux', 'Pierrepont', 'Arrancy', 'Beuveille', 'Boismont', 'Spincourt', 'Trieux',
+                                    'Tucquegnieux', 'Joudreville', 'Mancieulles', 'Landres', 'Murville', 'Preutin'
+                                ];
+
+                                // Find the first city mentioned in the description
+                                let firstCityIndex = Infinity;
+                                let bestCity = null;
+
+                                localCities.forEach(city => {
+                                    const index = descLower.indexOf(city.toLowerCase());
+                                    if (index !== -1 && index < firstCityIndex) {
+                                        firstCityIndex = index;
+                                        bestCity = city;
+                                    }
+                                });
+
+                                if (bestCity && !formData.city) newUpdates.city = bestCity;
+
+                                // 6. Detect DPE / GES
+                                const dpeMatch = desc.match(/DPE\s*[:\s-]*([A-G])/i) || desc.match(/classe\s*énergie\s*[:\s-]*([A-G])/i) || desc.match(/énergie\s*[:\s-]*([A-G])/i);
+                                if (dpeMatch && !formData.dpe_energy) newUpdates.dpe_energy = dpeMatch[1].toUpperCase();
+
+                                const gesMatch = desc.match(/GES\s*[:\s-]*([A-G])/i) || desc.match(/classe\s*climat\s*[:\s-]*([A-G])/i) || desc.match(/climat\s*[:\s-]*([A-G])/i);
+                                if (gesMatch && !formData.dpe_ges) newUpdates.dpe_ges = gesMatch[1].toUpperCase();
+
+                                // 7. Detect Features
                                 const keywords = {
-                                    'Jardin': ['jardin', 'terrain', 'parcelle', 'cour'],
+                                    'Jardin': ['jardin', 'terrain', 'parcelle', 'cour '],
                                     'Garage': ['garage', 'box'],
                                     'Terrasse': ['terrasse'],
                                     'Balcon': ['balcon'],
                                     'Cave': ['cave', 'sous-sol'],
-                                    'Parking': ['parking', 'stationnement'],
+                                    'Parking': ['parking', 'stationnement', 'place'],
                                     'Ascenseur': ['ascenseur'],
                                     'Sans travaux': ['rénové', 'neuf', 'aucun travaux', 'refait', 'impeccable', 'clé en main']
                                 };
 
                                 Object.entries(keywords).forEach(([feat, keys]) => {
-                                    if (keys.some(k => desc.includes(k))) {
+                                    if (keys.some(k => descLower.includes(k))) {
                                         if (!detectedFeatures.includes(feat)) detectedFeatures.push(feat);
                                     }
                                 });
+
+                                // 8. Auto-Generate Title
+                                if (!formData.title) {
+                                    const type = newUpdates.type || formData.type || 'Bien';
+                                    const ville = newUpdates.city || formData.city || '';
+                                    const surface = newUpdates.surface || formData.surface || '';
+                                    let title = `${type}`;
+                                    if (surface) title += ` ${surface}m²`;
+                                    if (ville) title += ` à ${ville}`;
+                                    newUpdates.title = title;
+                                }
 
                                 // Apply updates
                                 setFormData(prev => ({
@@ -333,10 +409,10 @@ const PropertyForm = () => {
                                     features: detectedFeatures.join(', ')
                                 }));
 
-                                alert("🪄 Analyse terminée !\n\nJ'ai détecté et rempli :\n" +
-                                    (newUpdates.surface ? `- Surface : ${newUpdates.surface} m²\n` : '') +
-                                    (newUpdates.rooms ? `- Chambres : ${newUpdates.rooms}\n` : '') +
-                                    `- Atouts : ${detectedFeatures.join(', ')}`);
+                                const summary = Object.keys(newUpdates).map(k => `- ${k}: ${newUpdates[k]}`).join('\n');
+                                const featuresSummary = detectedFeatures.length > 0 ? `- Atouts: ${detectedFeatures.join(', ')}` : '';
+
+                                alert(`🪄 Analyse terminée !\n\nChamps remplis :\n${summary}\n${featuresSummary}`);
                             }}
                             className="text-xs font-bold text-[#C5A059] flex items-center gap-1 hover:text-[#002B5B] transition-colors"
                         >

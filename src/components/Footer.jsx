@@ -2,7 +2,7 @@ import React from 'react';
 import { Phone, Mail, MapPin, Facebook, Instagram, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { AGENT_INFO, LOGO_URL } from '../constants';
+import { AGENT_INFO, LOGO_URL, AGENCY_SEAL } from '../constants';
 
 const Footer = () => {
     const navigate = useNavigate();
@@ -16,9 +16,9 @@ const Footer = () => {
         <footer className="bg-[#1A1A1A] text-white py-16 px-4 border-t-8 border-[#C5A059] font-sans">
             <div className="max-w-7xl mx-auto grid md:grid-cols-4 gap-12 text-sm">
                 <div className="col-span-1 md:col-span-2">
-                    <div className="flex items-center gap-4 mb-6">
-                        <div className="bg-white p-2 rounded">
-                            <img src={LOGO_URL} alt="Borbiconi" className="h-20" />
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="bg-white p-1 rounded-full overflow-hidden shadow-xl border-4 border-[#C5A059]/20">
+                            <img src={AGENCY_SEAL} alt="Borbiconi Agence" className="h-40 w-40 object-contain" />
                         </div>
                     </div>
                     <p className="text-gray-400 mb-6 leading-relaxed max-w-sm">
@@ -78,8 +78,8 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-gray-600 text-xs gap-4">
                 <span>© 2026 Borbiconi Immobilier • Tous droits réservés.</span>
                 <div className="flex gap-6">
-                    <span className="hover:text-gray-400 cursor-pointer">Mentions Légales</span>
-                    <span className="hover:text-gray-400 cursor-pointer">Politique de confidentialité</span>
+                    <Link to="/mentions-legales" onClick={() => window.scrollTo(0, 0)} className="hover:text-gray-400 cursor-pointer">Mentions Légales</Link>
+                    <Link to="/mentions-legales" onClick={() => setTimeout(() => document.getElementById('privacy')?.scrollIntoView({ behavior: 'smooth' }), 100)} className="hover:text-gray-400 cursor-pointer">Politique de confidentialité</Link>
                     <Link to="/admin/login" className="flex items-center gap-1 text-gray-600 hover:text-[#C5A059] transition-colors">
                         <Lock size={12} /> Administration
                     </Link>

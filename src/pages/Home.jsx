@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, User, CheckCircle2, Award, Sparkles, TrendingUp, Camera, Truck, Sofa, PenTool } from 'lucide-react';
+import { MapPin, User, CheckCircle2, Award, Sparkles, TrendingUp, Camera, Truck, Sofa, PenTool, RefreshCcw, Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import PropertyCard from '../components/PropertyCard';
@@ -16,6 +16,7 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
 
     // Filters
+    const [activeStatus, setActiveStatus] = useState('Tous');
     const [activeType, setActiveType] = useState('Tous');
     const [activeCities, setActiveCities] = useState([]); // Array of strings, empty = all
     const [activeBudget, setActiveBudget] = useState('');
@@ -50,10 +51,11 @@ const Home = () => {
     const filteredProperties = useMemo(() => {
         // 1. Strict Filters (Base Criteria)
         let candidates = properties.filter(p => {
+            const statusMatch = activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus;
             const typeMatch = activeType === 'Tous' || p.type === activeType;
             const cityMatch = activeCities.length === 0 || activeCities.includes(p.city);
             const priceMatch = activeBudget === '' || p.price <= parseInt(activeBudget);
-            return typeMatch && cityMatch && priceMatch;
+            return statusMatch && typeMatch && cityMatch && priceMatch;
         });
 
         // If no advanced filters are active, return candidates directly (Score 100 implied)
@@ -107,17 +109,19 @@ const Home = () => {
         // 3. Sort by Score (Best match first)
         return scoredCandidates.sort((a, b) => b.matchScore - a.matchScore);
 
-    }, [properties, activeType, activeCities, activeBudget, activeMinSurface, activeMinRooms, activeFeatures]);
+    }, [properties, activeStatus, activeType, activeCities, activeBudget, activeMinSurface, activeMinRooms, activeFeatures]);
 
     const cityCounts = useMemo(() => {
         const counts = {};
         properties.forEach(p => {
-            counts[p.city] = (counts[p.city] || 0) + 1;
+            if (activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus) {
+                counts[p.city] = (counts[p.city] || 0) + 1;
+            }
         });
         return counts;
-    }, [properties]);
+    }, [properties, activeStatus]);
 
-    const cities = useMemo(() => [...new Set(properties.map(p => p.city))], [properties]);
+    const cities = useMemo(() => [...new Set(properties.filter(p => activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus).map(p => p.city))], [properties, activeStatus]);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -132,6 +136,8 @@ const Home = () => {
     return (
         <>
             <SearchHero
+                activeStatus={activeStatus}
+                setActiveStatus={setActiveStatus}
                 activeType={activeType}
                 setActiveType={setActiveType}
                 activeCities={activeCities}
@@ -149,7 +155,7 @@ const Home = () => {
                 loading={loading}
             />
 
-            <div className="max-w-7xl mx-auto px-4 pt-24 pb-20 font-sans">
+            <div className="max-w-7xl mx-auto px-4 pt-12 md:pt-48 lg:pt-40 pb-20 font-sans">
                 <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
                     <div className="text-center md:text-left">
                         <h2 className="text-4xl font-display font-black text-[#002B5B]">Biens à la Une</h2>
@@ -187,16 +193,26 @@ const Home = () => {
                 {!loading && filteredProperties.length === 0 && (
                     <div className="text-center py-20 bg-gray-50 border border-dashed border-gray-300 rounded-xl">
                         <p className="text-gray-500 mb-4">Aucun bien ne correspond à vos critères pour le moment.</p>
-                        <Button variant="ghost" onClick={() => {
-                            setActiveType('Tous');
-                            setActiveCities([]);
-                            setActiveBudget('');
-                            setActiveMinSurface('');
-                            setActiveMinRooms('');
-                            setActiveFeatures([]);
-                        }}>
-                            Effacer tous les filtres
-                        </Button>
+                        <div className="flex justify-center">
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => {
+                                    setActiveStatus('Tous');
+                                    setActiveType('Tous');
+                                    setActiveCities([]);
+                                    setActiveBudget('');
+                                    setActiveMinSurface('');
+                                    setActiveMinRooms('');
+                                    setActiveFeatures([]);
+                                }}
+                                className="group flex items-center gap-3 px-8 py-4 bg-[#002B5B] hover:bg-[#003d82] text-white rounded-2xl font-bold transition-all shadow-xl shadow-[#002B5B]/20 overflow-hidden relative"
+                            >
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                                <RefreshCcw size={20} className="group-hover:rotate-180 transition-transform duration-500" />
+                                <span>NOUVELLE RECHERCHE</span>
+                            </motion.button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -212,11 +228,11 @@ const Home = () => {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-[#002B5B]/5 rounded-2xl flex items-center justify-center mb-6 text-[#002B5B]">
+                            <div className="w-16 h-16 bg-[#C5A059]/10 rounded-2xl flex items-center justify-center mb-6 text-[#C5A059]">
                                 <Camera size={32} />
                             </div>
                             <h3 className="font-display font-bold text-lg text-[#002B5B] mb-3">Photos & Visite Virtuelle</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Shooting HDR et visite immersive pour sublimer votre bien dès le premier regard.</p>
+                            <p className="text-gray-500 text-sm leading-relaxed">Shooting HDR et <span className="font-bold text-[#C5A059]">visite immersive</span> pour sublimer votre bien dès le premier regard.</p>
                         </motion.div>
 
                         <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
@@ -228,19 +244,19 @@ const Home = () => {
                         </motion.div>
 
                         <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-6 text-[#002B5B]">
+                            <div className="w-16 h-16 bg-[#C5A059]/10 rounded-2xl flex items-center justify-center mb-6 text-[#C5A059]">
                                 <Sofa size={32} />
                             </div>
                             <h3 className="font-display font-bold text-lg text-[#002B5B] mb-3">Home Staging 3D</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Rénovation virtuelle et projections 3D pour révéler tout le potentiel de vos espaces.</p>
+                            <p className="text-gray-500 text-sm leading-relaxed">Rénovation virtuelle et projections 3D pour révéler tout le <span className="font-bold text-[#C5A059]">potentiel</span> de vos espaces.</p>
                         </motion.div>
 
                         <motion.div whileHover={{ y: -5 }} className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 text-[#002B5B]">
+                            <div className="w-16 h-16 bg-[#C5A059]/10 rounded-2xl flex items-center justify-center mb-6 text-[#C5A059]">
                                 <PenTool size={32} />
                             </div>
                             <h3 className="font-display font-bold text-lg text-[#002B5B] mb-3">Signature Électronique</h3>
-                            <p className="text-gray-500 text-sm leading-relaxed">Gagnez du temps et sécurisez vos démarches avec la signature certifiée à distance.</p>
+                            <p className="text-gray-500 text-sm leading-relaxed">Gagnez du temps et <span className="font-bold text-[#C5A059]">sécurisez</span> vos démarches avec la signature certifiée à distance.</p>
                         </motion.div>
                     </div>
                 </div>
@@ -255,20 +271,20 @@ const Home = () => {
                     <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
 
                         <div className="md:w-5/12 flex justify-center relative group">
-                            <div className="relative w-64 h-80 rounded-2xl overflow-hidden border-4 border-white shadow-2xl transform rotate-3 group-hover:rotate-0 transition-all duration-500">
+                            <div className="relative w-48 h-64 rounded-2xl overflow-hidden border-4 border-white shadow-xl transform rotate-3 group-hover:rotate-0 transition-all duration-500">
                                 <div className="absolute inset-0 bg-[#002B5B]/10 group-hover:bg-transparent transition-colors z-10"></div>
                                 <img src={AGENT_INFO.photo} alt="Vanessa Tancredi" className="w-full h-full object-cover" />
                             </div>
-
                             <div className="absolute -bottom-4 -right-4 md:right-12 bg-white p-4 rounded-xl shadow-lg flex items-center gap-3 animate-float z-20">
                                 <div className="bg-[#C5A059] p-2 rounded-full text-white">
-                                    <CheckCircle2 size={18} />
+                                    <MapPin size={18} />
                                 </div>
                                 <div>
-                                    <p className="font-black text-[#002B5B] text-xl">15+</p>
-                                    <p className="text-[10px] uppercase text-gray-400 font-bold tracking-wider">Années d'expérience</p>
+                                    <p className="font-black text-[#002B5B] text-lg">Experte</p>
+                                    <p className="text-[10px] uppercase text-gray-400 font-bold tracking-wider">Pays-Haut</p>
                                 </div>
                             </div>
+
                         </div>
 
                         <div className="md:w-7/12 text-center md:text-left">
@@ -280,31 +296,55 @@ const Home = () => {
 
                             <div className="text-gray-500 leading-relaxed mb-8 text-base font-medium space-y-4 text-justify">
                                 <p>
-                                    Passionnée par l'immobilier et profondément attachée à ma région, je suis agent commercial chez <strong>BORBICONI Immobilier</strong>, agence reconnue et implantée à Ottange, ainsi qu'au Kirschberg au Luxembourg et à Vilosnes-Haraumont (Meuse).
+                                    Passionnée par l’immobilier et profondément ancrée dans notre région, je ne me contente pas de vendre des biens : je concrétise des projets de vie. En tant qu'agent commercial indépendant pour <strong>BORBICONI Immobilier</strong>, je vous offre le meilleur des deux mondes : l'agilité et la disponibilité d'une conseillère de proximité, alliées à la puissance d'un groupe implanté d'Ottange au Luxembourg, jusqu'à la Meuse.
                                 </p>
+
+                                <h4 className="font-bold text-[#002B5B] pt-2">Un terrain de jeu que je connais par cœur</h4>
                                 <p>
-                                    J'interviens principalement sur les secteurs de <strong>Mercy-le-Bas, Piennes, Bouligny, Longwy, Longuyon, Villerupt</strong> et leurs environs, que je connais parfaitement pour y travailler au quotidien.
+                                    J’interviens au quotidien sur un secteur stratégique entre <strong>Longwy, Villerupt, Longuyon et Piennes</strong>. Que vous soyez à Mercy-le-Bas, Bouligny ou dans les villages voisins, je connais chaque spécificité du marché local. Cette expertise me permet de vous conseiller avec précision, qu'il s'agisse d'estimer votre bien au juste prix ou de dénicher l'emplacement idéal pour votre future famille.
                                 </p>
+
+                                <h4 className="font-bold text-[#002B5B] pt-2">L'humain au centre de chaque transaction</h4>
                                 <p>
-                                    Cette connaissance du terrain me permet de vous conseiller au plus juste, que ce soit pour fixer le bon prix, choisir le bon emplacement ou saisir une opportunité.
+                                    Parce que chaque projet est unique, je privilégie un accompagnement sur-mesure. En travaillant avec moi, vous avez une interlocutrice unique, transparente et disponible, qui défend vos intérêts de la première estimation jusqu'à la signature finale.
                                 </p>
-                                <p className="italic text-[#002B5B]">
+
+                                <p className="text-xl font-display font-medium text-[#C5A059] italic text-center py-4 leading-relaxed">
                                     "Chaque projet est unique. C'est pourquoi je privilégie un accompagnement humain, personnalisé et transparent, fondé sur l'écoute, la confiance et la disponibilité."
                                 </p>
-                                <p>
-                                    De la première estimation jusqu'à la signature finale, je suis à vos côtés pour vous guider, vous rassurer et défendre vos intérêts. Vous avez un projet immobilier ? <strong>Parlons-en simplement.</strong>
+
+                                <p className="font-bold text-[#002B5B] italic pt-2">
+                                    Vous avez un projet immobilier ?
                                 </p>
                             </div>
 
                             <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                 <Button onClick={() => navigate('/contact')} className="shadow-xl shadow-blue-900/10 px-8 py-4 text-base rounded-xl">
-                                    Contacter Vanessa
+                                    Parlons-en simplement
                                 </Button>
                                 <Button variant="outline" onClick={() => navigate('/estimation')} className="px-8 py-4 text-base rounded-xl">
                                     Demander une estimation
                                 </Button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* SEO Text Section */}
+            <div className="bg-[#F4F7FA] py-16 border-t border-gray-100">
+                <div className="max-w-4xl mx-auto px-4 text-center md:text-left">
+                    <h2 className="text-xl font-bold text-[#002B5B] mb-6">Zones d'intervention & Expertise Immobilière</h2>
+                    <div className="text-gray-400 text-xs leading-relaxed space-y-4 text-justify">
+                        <p>
+                            <strong>Secteur Nord Meurthe-et-Moselle & Frontalier :</strong> Immobilier Longwy, Vente maison Longuyon, Appartements à Mercy-le-Bas, Achat Piennes, Estimation Bouligny, Immobilier Villerupt, Audun-le-Roman.
+                        </p>
+                        <p>
+                            <strong>Nos services :</strong> Estimation immobilière gratuite, Vente d'appartements et maisons, Terrains à bâtir, Investissement locatif frontalier, Honoraires adaptés, Accompagnement personnalisé.
+                        </p>
+                        <p>
+                            Vanessa Tancredi, mandataire indépendant partenaire du groupe Borbiconi Immobilier.
+                        </p>
                     </div>
                 </div>
             </div>
