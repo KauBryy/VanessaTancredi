@@ -24,6 +24,7 @@ const Home = () => {
     const [activeMinRooms, setActiveMinRooms] = useState('');
     const [activeFeatures, setActiveFeatures] = useState([]); // ['Jardin', 'Garage', etc]
     const [dbCities, setDbCities] = useState([]); // Cities from DB
+    const [showFilteredResults, setShowFilteredResults] = useState(false); // For expanding filtered grid on home
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -140,9 +141,9 @@ const Home = () => {
     const isFilterActive = activeStatus !== 'Tous' || activeType !== 'Tous' || activeCities.length > 0 || activeBudget !== '' || activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
 
     const displayedProperties = useMemo(() => {
-        if (isFilterActive) return filteredProperties;
-        return filteredProperties.slice(0, 6);
-    }, [filteredProperties, isFilterActive]);
+        if (!isFilterActive) return filteredProperties.slice(0, 6);
+        return showFilteredResults ? filteredProperties : filteredProperties.slice(0, 6);
+    }, [filteredProperties, isFilterActive, showFilteredResults]);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -174,9 +175,11 @@ const Home = () => {
                 cities={dbCities.length > 0 ? dbCities : cities}
                 cityCounts={cityCounts}
                 loading={loading}
+                resultsCount={filteredProperties.length}
+                isFilterActive={isFilterActive}
             />
 
-            <div className="max-w-7xl mx-auto px-4 pt-12 md:pt-48 lg:pt-40 pb-20 font-sans">
+            <div id="results" className="max-w-7xl mx-auto px-4 pt-12 md:pt-48 lg:pt-40 pb-20 font-sans">
                 <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
                     <div className="text-center md:text-left">
                         <h2 className="text-4xl font-display font-black text-[#002B5B]">Biens à la Une</h2>
@@ -211,16 +214,28 @@ const Home = () => {
                     </motion.div>
                 )}
 
-                {!loading && !isFilterActive && filteredProperties.length > 6 && (
+                {!loading && (
                     <div className="mt-16 flex justify-center">
-                        <Button
-                            onClick={() => navigate('/annonces')}
-                            variant="outline"
-                            className="px-10 py-4 text-base rounded-xl border-2 border-[#002B5B] text-[#002B5B] hover:bg-[#002B5B] hover:text-white transition-all font-bold shadow-lg shadow-blue-900/5 group"
-                        >
-                            Voir toutes mes annonces
-                            <RefreshCcw size={18} className="ml-2 group-hover:rotate-180 transition-transform duration-700" />
-                        </Button>
+                        {!isFilterActive && filteredProperties.length > 6 && (
+                            <Button
+                                onClick={() => navigate('/annonces')}
+                                variant="outline"
+                                className="px-10 py-4 text-base rounded-xl border-2 border-[#002B5B] text-[#002B5B] hover:bg-[#002B5B] hover:text-white transition-all font-bold shadow-lg shadow-blue-900/5 group"
+                            >
+                                Voir toutes les annonces
+                                <RefreshCcw size={18} className="ml-2 group-hover:rotate-180 transition-transform duration-700" />
+                            </Button>
+                        )}
+
+                        {isFilterActive && filteredProperties.length > 6 && !showFilteredResults && (
+                            <Button
+                                onClick={() => setShowFilteredResults(true)}
+                                variant="primary"
+                                className="px-10 py-4 text-base rounded-xl font-bold shadow-xl shadow-blue-900/20"
+                            >
+                                Afficher les {filteredProperties.length} biens correspondants
+                            </Button>
+                        )}
                     </div>
                 )}
 

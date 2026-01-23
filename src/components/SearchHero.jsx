@@ -14,7 +14,8 @@ const SearchHero = ({
     activeMinSurface, setActiveMinSurface,
     activeMinRooms, setActiveMinRooms,
     activeFeatures, setActiveFeatures,
-    cities, cityCounts, loading
+    cities, cityCounts, loading,
+    resultsCount, isFilterActive
 }) => {
     const [actionTab, setActionTab] = useState('buy'); // 'buy' or 'sell'
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -204,6 +205,27 @@ const SearchHero = ({
                                             </button>
                                         </div>
                                     </div>
+
+                                    {/* Action Button inside Filter area when active */}
+                                    <AnimatePresence>
+                                        {isFilterActive && (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.9 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                                className="mt-6 flex justify-center"
+                                            >
+                                                <button
+                                                    onClick={() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' })}
+                                                    className="bg-[#002B5B] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-900/30 flex items-center gap-3 hover:bg-[#003d82] transition-all hover:translate-y-[-2px]"
+                                                >
+                                                    <Search size={18} />
+                                                    Afficher les {resultsCount} biens correspondants
+                                                    <ArrowRight size={18} />
+                                                </button>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
 
                                     {/* Advanced Filters Panel */}
                                     <AnimatePresence>
