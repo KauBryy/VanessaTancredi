@@ -7,6 +7,9 @@
         "activeTab",
         "scripting"
     ],
+    "host_permissions": [
+        "https://kaubryy.github.io/*"
+    ],
     "action": {
         "default_popup": "popup.html"
     },
