@@ -11,6 +11,7 @@ import Legal from './pages/Legal';
 import Login from './pages/admin/Login';
 import Dashboard from './pages/admin/Dashboard';
 import PropertyForm from './pages/admin/PropertyForm';
+import CityManager from './pages/admin/CityManager';
 import ProtectedRoute from './pages/admin/ProtectedRoute';
 
 import FixedMobileContact from './components/FixedMobileContact';
@@ -51,6 +52,7 @@ function App() {
                 {/* Protected Admin Routes */}
                 <Route path="/admin" element={<ProtectedRoute />}>
                     <Route index element={<Dashboard />} />
+                    <Route path="cities" element={<CityManager />} />
                     <Route path="new" element={<PropertyForm />} />
                     <Route path="edit/:id" element={<PropertyForm />} />
                 </Route>

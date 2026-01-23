@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Plus, Edit2, Trash2, LogOut, LayoutDashboard } from 'lucide-react';
+import { Plus, Edit2, Trash2, LogOut, LayoutDashboard, MapPin } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { supabase } from '../../lib/supabase';
 
@@ -66,9 +66,14 @@ const Dashboard = () => {
             <div className="max-w-7xl mx-auto px-4 py-12">
                 <div className="flex justify-between items-center mb-8">
                     <h2 className="text-2xl font-bold text-gray-800">Vos Annonces ({properties.length})</h2>
-                    <Button onClick={() => navigate('/admin/new')} className="shadow-lg shadow-blue-900/10 rounded-xl">
-                        <Plus size={20} /> Ajouter un bien
-                    </Button>
+                    <div className="flex gap-4">
+                        <Button onClick={() => navigate('/admin/cities')} variant="outline" className="rounded-xl">
+                            <MapPin size={20} className="mr-2" /> Gérer les Villes
+                        </Button>
+                        <Button onClick={() => navigate('/admin/new')} className="shadow-lg shadow-blue-900/10 rounded-xl">
+                            <Plus size={20} /> Ajouter un bien
+                        </Button>
+                    </div>
                 </div>
 
                 {loading ? (

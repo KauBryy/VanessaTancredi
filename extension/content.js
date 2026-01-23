@@ -1,4 +1,4 @@
-// Listen for messages from popup
+// Listen for messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "SCRAPE") {
         const data = scrapePage();
@@ -10,90 +10,75 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function scrapePage() {
     let description = "";
     let images = [];
-
     const host = window.location.hostname;
 
+    // --- Helper: Extract unique ID from Facebook URL ---
+    // FB URLs look like: .../123456_9876543210_12345_n.jpg?...
+    // The middle long number is usually the unique photo ID.
+    function getFbImageId(url) {
+        try {
+            const match = url.match(/\/(\d+)_(\d+)_(\d+)_/);
+            return match ? match[2] : url; // Return middle ID or full URL if no match
+        } catch (e) { return url; }
+    }
+
     if (host.includes("facebook.com")) {
-        // --- FACEBOOK STRATEGY ---
+        // --- TEXT STRATEGY (Improved for Emojis) ---
+        // We prioritize the main post content container.
+        const textContainer = document.querySelector('div[data-ad-comet-preview="message"], div[dir="auto"]');
 
-        // 1. Get Text
-        // Facebook posts often use div[dir="auto"] for the main content text.
-        // We look for the one with the most text content to avoid comments/buttons.
-        const textBlocks = Array.from(document.querySelectorAll('div[dir="auto"]'));
-        let bestBlock = null;
-        let maxLength = 0;
-
-        textBlocks.forEach(block => {
-            const text = block.innerText.trim();
-            // Filter out short texts (names, buttons)
-            if (text.length > 50 && text.length > maxLength) {
-                maxLength = text.length;
-                bestBlock = block;
-            }
-        });
-
-        if (bestBlock) {
-            description = bestBlock.innerText.trim();
-        } else {
-            // Fallback: try looking for aria-label or specific roles if standard div fails
-            // Or try to get selection if user selected text
-            const selection = window.getSelection().toString();
-            if (selection.length > 20) description = selection;
+        if (textContainer) {
+            // We use innerText which usually preserves emojis on Mac/Windows
+            // We can also try to clone and replace images with alt text, but let's stick to text first.
+            description = textContainer.innerText || textContainer.textContent;
         }
 
-        // 2. Get Images
-        // If we are in "Theater mode" (Photo viewer)
+        // --- IMAGE STRATEGY (Deduping + Collage) ---
+        const rawImages = [];
+
+        // 1. Theater Mode (Single large image)
         const theaterImg = document.querySelector('img[data-visualcompletion="media-vc-image"]');
-        if (theaterImg) {
-            images.push(theaterImg.src);
-        }
+        if (theaterImg) rawImages.push(theaterImg.src);
 
-        // Determine if we are on a feed post or single post
-        const allImages = Array.from(document.querySelectorAll('img'));
-        allImages.forEach(img => {
-            // Filter out small icons, emojis, profile pics (usually small or square small)
-            const rect = img.getBoundingClientRect();
-            if (rect.width > 300 && rect.height > 300) {
-                // Check if it's not an ad (heuristic)
+        // 2. Feed / Post Mode (Collage)
+        // Select all images in the main role/feed area to avoid sidebar ads
+        const mainContent = document.querySelector('[role="main"]') || document.body;
+        const imgs = Array.from(mainContent.querySelectorAll('img'));
+
+        imgs.forEach(img => {
+            // Filter out fluff
+            if (img.width > 200 && img.height > 200) { // Lower threshold slightly
                 if (!img.closest('[aria-label="Sponsored"]')) {
-                    if (!images.includes(img.src)) images.push(img.src);
+                    rawImages.push(img.src);
                 }
             }
         });
 
-    } else if (host.includes("leboncoin.fr")) {
-        // --- LEBONCOIN STRATEGY ---
+        // 3. Smart Deduping
+        const seenIds = new Set();
 
-        // Description
-        const descDiv = document.querySelector('div[data-test-id="ad-product-description"]');
-        if (descDiv) description = descDiv.innerText.trim();
-
-        // Images
-        const imgElements = document.querySelectorAll('img');
-        imgElements.forEach(img => {
-            if (img.alt && img.alt.includes("photo")) {
-                if (!images.includes(img.src)) images.push(img.src);
+        rawImages.forEach(url => {
+            const id = getFbImageId(url);
+            if (!seenIds.has(id)) {
+                seenIds.add(id);
+                images.push(url);
             }
         });
 
     } else {
         // --- GENERIC FALLBACK ---
-
-        // Try to find the largest text block
         const pTags = document.querySelectorAll('p, div, article');
         let bestText = "";
-
         pTags.forEach(p => {
-            if (p.innerText.length > bestText.length) {
-                bestText = p.innerText;
-            }
+            if (p.innerText.length > bestText.length) bestText = p.innerText;
         });
-        if (bestText.length > 100) description = bestText;
+        if (bestText.length > 50) description = bestText;
 
-        // Largest images
         const imgs = document.querySelectorAll('img');
+        const seen = new Set();
         imgs.forEach(img => {
-            if (img.width > 300 && img.height > 300) {
+            if (img.width > 300 && img.height > 300 && !seen.has(img.src)) {
+                seen.add(img.src);
                 images.push(img.src);
             }
         });

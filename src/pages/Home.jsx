@@ -23,6 +23,7 @@ const Home = () => {
     const [activeMinSurface, setActiveMinSurface] = useState('');
     const [activeMinRooms, setActiveMinRooms] = useState('');
     const [activeFeatures, setActiveFeatures] = useState([]); // ['Jardin', 'Garage', etc]
+    const [dbCities, setDbCities] = useState([]); // Cities from DB
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -45,7 +46,16 @@ const Home = () => {
             }
         };
 
+        const fetchCities = async () => {
+            const { data } = await supabase
+                .from('cities')
+                .select('*')
+                .order('name', { ascending: true });
+            if (data) setDbCities(data);
+        };
+
         fetchProperties();
+        fetchCities();
     }, []);
 
     const filteredProperties = useMemo(() => {
@@ -121,7 +131,11 @@ const Home = () => {
         return counts;
     }, [properties, activeStatus]);
 
-    const cities = useMemo(() => [...new Set(properties.filter(p => activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus).map(p => p.city))], [properties, activeStatus]);
+    // Fallback: if dbCities is empty, derive from properties to avoid empty dropdown
+    const cities = useMemo(() => {
+        if (dbCities.length > 0) return dbCities.map(c => c.name);
+        return [...new Set(properties.filter(p => activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus).map(p => p.city))];
+    }, [properties, activeStatus, dbCities]);
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -150,7 +164,7 @@ const Home = () => {
                 setActiveMinRooms={setActiveMinRooms}
                 activeFeatures={activeFeatures}
                 setActiveFeatures={setActiveFeatures}
-                cities={cities}
+                cities={dbCities.length > 0 ? dbCities : cities}
                 cityCounts={cityCounts}
                 loading={loading}
             />

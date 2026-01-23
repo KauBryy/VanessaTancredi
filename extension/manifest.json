@@ -10,6 +10,9 @@
     "host_permissions": [
         "https://kaubryy.github.io/*"
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "action": {
         "default_popup": "popup.html"
     },

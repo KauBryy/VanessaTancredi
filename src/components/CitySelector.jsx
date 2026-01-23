@@ -2,26 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, ChevronDown, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const SECTORS = [
-    {
-        name: "Bassin de Longwy & Frontières",
-        cities: ["Longwy", "Mont-Saint-Martin", "Herserange", "Réhon", "Lexy", "Villers-la-Montagne", "Saulnes"]
-    },
-    {
-        name: "Cœur de Secteur (Pays-Haut)",
-        cities: ["Mercy-le-Bas", "Joppécourt", "Boismont", "Bazailles", "Ville-au-Montois", "Fillières", "Boudrezy"]
-    },
-    {
-        name: "Secteur Longuyon & Environs",
-        cities: ["Longuyon", "Pierrepont", "Arrancy-sur-Crusnes", "Beuveille", "Doncourt-lès-Longuyon", "Spincourt"]
-    },
-    {
-        name: "Secteur Boulange / Audun",
-        cities: ["Boulange", "Aumetz", "Audun-le-Roman", "Ottange", "Trieux", "Hayange"]
-    }
-];
-
-const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) => {
+const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading, availableCities }) => {
     // selectedCities is an array of strings. If empty, it implicitly means "All".
 
     const [isOpen, setIsOpen] = useState(false);
@@ -47,23 +28,34 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
     };
 
     const toggleSector = (sector) => {
-        // Collect all available cities in this sector (count > 0 or loading)
-        const availableCities = sector.cities.filter(city => {
-            const count = cityCounts[city] || 0;
-            return loading || count > 0;
+        // Collect all available cities in this sector (count > 0 or loading or DB list)
+        // If we are using DB list (availableCities provided), we want to allow selecting them all regardless of count potentially?
+        // But usually search filters only care about active properties.
+        // HOWEVER, the user asked for "Manageable" list.
+        // Let's stick to: Select all cities in this sector that are visible in the list.
+
+        const citiesInSector = sector.cities;
+
+        // Use the same logic as rendering to decide which ones are "toggleable"
+        // If passed availableCities (DB mode), all are toggleable.
+        // If not (legacy mode), only those with count > 0 are.
+
+        const toggleableCities = citiesInSector.filter(city => {
+            if (availableCities && availableCities.length > 0) return true;
+            return loading || (cityCounts[city] || 0) > 0;
         });
 
-        if (availableCities.length === 0) return;
+        if (toggleableCities.length === 0) return;
 
-        const allSelected = availableCities.every(city => selectedCities.includes(city));
+        const allSelected = toggleableCities.every(city => selectedCities.includes(city));
 
         if (allSelected) {
             // Deselect all
-            onChange(selectedCities.filter(c => !availableCities.includes(c)));
+            onChange(selectedCities.filter(c => !toggleableCities.includes(c)));
         } else {
             // Select all (merge)
-            const otherCities = selectedCities.filter(c => !availableCities.includes(c));
-            onChange([...otherCities, ...availableCities]);
+            const otherCities = selectedCities.filter(c => !toggleableCities.includes(c));
+            onChange([...otherCities, ...toggleableCities]);
         }
     };
 
@@ -72,6 +64,54 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
         : selectedCities.length === 1
             ? selectedCities[0]
             : `${selectedCities.length} villes sélectionnées`;
+
+    // TRANSFORM DATA
+    // We need to group 'availableCities' (array of objects {name, sector}) into sectors.
+    // OR allow legacy 'activeCities' logic if input is just names.
+
+    let sectorsToRender = [];
+
+    if (availableCities && availableCities.length > 0 && typeof availableCities[0] === 'object') {
+        // New Mode: DB Objects passed
+        const grouped = availableCities.reduce((acc, city) => {
+            const sectName = city.sector || "Autres";
+            if (!acc[sectName]) acc[sectName] = [];
+            acc[sectName].push(city.name);
+            return acc;
+        }, {});
+
+        // Convert to array format expected by renderer
+        // We might want to enforce specific order of sectors if possible, but alphabetically or random for now.
+        // If we want specific order, we can map against the known list.
+        const PREFERRED_ORDER = [
+            "Bassin de Longwy & Frontières",
+            "Cœur de Secteur (Pays-Haut)",
+            "Secteur Longuyon & Environs",
+            "Secteur Boulange / Audun"
+        ];
+
+        sectorsToRender = Object.entries(grouped).map(([name, cities]) => ({ name, cities }));
+
+        // Sort sectors
+        sectorsToRender.sort((a, b) => {
+            const idxA = PREFERRED_ORDER.indexOf(a.name);
+            const idxB = PREFERRED_ORDER.indexOf(b.name);
+            if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+            if (idxA !== -1) return -1;
+            if (idxB !== -1) return 1;
+            return a.name.localeCompare(b.name);
+        });
+
+    } else {
+        // Fallback or Legacy Mode (should not happen if Home passes DB data correctly)
+        // If availableCities is just strings (names), we put them in one "Nos Villes" group.
+        if (availableCities && availableCities.length > 0) {
+            sectorsToRender = [{ name: "Nos Localités", cities: availableCities }];
+        } else {
+            // Empty? 
+            sectorsToRender = [];
+        }
+    }
 
     return (
         <div className="relative group" ref={containerRef}>
@@ -110,14 +150,11 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
                                 </span>
                             </div>
 
-                            {SECTORS.map((sector) => {
-                                // Check if all available cities in this sector are selected
-                                const availableCities = sector.cities.filter(city => {
-                                    const count = cityCounts[city] || 0;
-                                    return loading || count > 0;
-                                });
-                                const isSectorSelected = availableCities.length > 0 && availableCities.every(city => selectedCities.includes(city));
-                                const isSectorPartiallySelected = !isSectorSelected && availableCities.some(city => selectedCities.includes(city));
+                            {sectorsToRender.map((sector) => {
+                                const relevantCities = sector.cities.map(c => c); // simple copy
+
+                                // Calculate selection state
+                                const isSectorSelected = relevantCities.length > 0 && relevantCities.every(city => selectedCities.includes(city));
 
                                 return (
                                     <div key={sector.name}>
@@ -133,9 +170,12 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-1 gap-2">
-                                            {sector.cities.map((city) => {
+                                            {relevantCities.map((city) => {
                                                 const isSelected = selectedCities.includes(city);
                                                 const count = cityCounts[city] || 0;
+                                                // Disable if count is 0 (and we are not in a loading state)
+                                                // Exception: If the city is already selected (e.g. from URL or previous state), allow deselecting? 
+                                                // Standard UX: If 0 results, you can't filter by it.
                                                 const isDisabled = !loading && count === 0;
 
                                                 return (
@@ -143,7 +183,7 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
                                                         key={city}
                                                         onClick={() => !isDisabled && toggleCity(city)}
                                                         className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${isDisabled
-                                                            ? 'opacity-40 cursor-not-allowed bg-gray-50 pointer-events-none'
+                                                            ? 'opacity-40 cursor-not-allowed bg-gray-50'
                                                             : 'cursor-pointer hover:bg-gray-50'
                                                             } ${isSelected ? 'bg-[#002B5B]/5 text-[#002B5B]' : 'text-gray-600'}`}
                                                     >
@@ -152,9 +192,14 @@ const CitySelector = ({ selectedCities, onChange, cityCounts = {}, loading }) =>
                                                         </div>
                                                         <span className="text-sm font-medium flex items-center gap-1">
                                                             {city}
-                                                            {!loading && (
-                                                                <span className={`text-xs font-normal ${count === 0 ? 'text-gray-300' : 'text-gray-400'}`}>
+                                                            {!loading && count > 0 && (
+                                                                <span className="text-xs font-normal text-gray-400">
                                                                     ({count})
+                                                                </span>
+                                                            )}
+                                                            {!loading && count === 0 && (
+                                                                <span className="text-xs font-normal text-gray-300 italic">
+                                                                    (0)
                                                                 </span>
                                                             )}
                                                         </span>

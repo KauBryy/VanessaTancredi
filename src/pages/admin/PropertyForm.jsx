@@ -12,6 +12,8 @@ const PropertyForm = () => {
 
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [citiesList, setCitiesList] = useState([]);
+
     const [formData, setFormData] = useState({
         title: '',
         catch_phrase: '',
@@ -31,6 +33,17 @@ const PropertyForm = () => {
         dpe_energy: '', // A-G
         dpe_ges: '' // A-G
     });
+
+    useEffect(() => {
+        const fetchCities = async () => {
+            const { data } = await supabase
+                .from('cities')
+                .select('*')
+                .order('name', { ascending: true });
+            if (data) setCitiesList(data);
+        };
+        fetchCities();
+    }, []);
 
     // Fetch data if edit mode OR check for import params
     useEffect(() => {
@@ -290,7 +303,18 @@ const PropertyForm = () => {
                     </div>
                     <div className="space-y-2">
                         <label className="text-xs font-bold text-gray-500 uppercase">Ville</label>
-                        <input required name="city" value={formData.city} onChange={handleChange} className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:border-[#002B5B]" placeholder="Ex: Boulange" />
+                        <select
+                            required
+                            name="city"
+                            value={formData.city}
+                            onChange={handleChange}
+                            className="w-full p-4 border border-gray-200 rounded-lg outline-none focus:border-[#002B5B] bg-white"
+                        >
+                            <option value="">Sélectionner une ville</option>
+                            {citiesList.map(city => (
+                                <option key={city.id} value={city.name}>{city.name}</option>
+                            ))}
+                        </select>
                     </div>
                 </div>
 
@@ -400,7 +424,7 @@ const PropertyForm = () => {
                                 else if (descLower.includes('maison') || descLower.includes('pavillon') || descLower.includes('villa') || descLower.includes('fermette')) newUpdates.type = 'Maison';
 
                                 // 5. Detect City (Priority to first mention in text)
-                                const localCities = [
+                                const localCities = citiesList.length > 0 ? citiesList.map(c => c.name) : [
                                     'Longwy', 'Longuyon', 'Mercy-le-Bas', 'Villerupt', 'Audun-le-Roman', 'Piennes',
                                     'Bouligny', 'Boulange', 'Aumetz', 'Herserange', 'Lexy', 'Réhon', 'Mont-Saint-Martin',
                                     'Gorcy', 'Cosnes-et-Romain', 'Haucourt-Moulaine', 'Saulnes', 'Ugny', 'Doncourt',

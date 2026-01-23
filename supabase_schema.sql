@@ -87,3 +87,68 @@ create policy "Admins can upload property images."
 create policy "Admins can delete property images."
   on storage.objects for delete
   using ( bucket_id = 'property-images' and auth.role() = 'authenticated' );
+
+-- TABLE: CITIES
+create table public.cities (
+  id uuid default gen_random_uuid() primary key,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  name text not null unique
+);
+
+-- Enable RLS for Cities
+alter table public.cities enable row level security;
+
+-- Policies for Cities
+-- Everyone can read
+create policy "Public cities are viewable by everyone."
+  on public.cities for select
+  using ( true );
+
+-- Only admins can insert/update/delete
+create policy "Admins can insert cities."
+  on public.cities for insert
+  with check ( auth.role() = 'authenticated' );
+
+create policy "Admins can update cities."
+  on public.cities for update
+  using ( auth.role() = 'authenticated' );
+
+  using ( auth.role() = 'authenticated' );
+
+-- Update Cities Table to include Sector
+alter table public.cities add column if not exists sector text;
+
+-- Insert Default Data (Safe insert)
+insert into public.cities (name, sector)
+values 
+  ('Longwy', 'Bassin de Longwy & Frontières'),
+  ('Mont-Saint-Martin', 'Bassin de Longwy & Frontières'),
+  ('Herserange', 'Bassin de Longwy & Frontières'),
+  ('Réhon', 'Bassin de Longwy & Frontières'),
+  ('Lexy', 'Bassin de Longwy & Frontières'),
+  ('Villers-la-Montagne', 'Bassin de Longwy & Frontières'),
+  ('Saulnes', 'Bassin de Longwy & Frontières'),
+  
+  ('Mercy-le-Bas', 'Cœur de Secteur (Pays-Haut)'),
+  ('Joppécourt', 'Cœur de Secteur (Pays-Haut)'),
+  ('Boismont', 'Cœur de Secteur (Pays-Haut)'),
+  ('Bazailles', 'Cœur de Secteur (Pays-Haut)'),
+  ('Ville-au-Montois', 'Cœur de Secteur (Pays-Haut)'),
+  ('Fillières', 'Cœur de Secteur (Pays-Haut)'),
+  ('Boudrezy', 'Cœur de Secteur (Pays-Haut)'),
+  
+  ('Longuyon', 'Secteur Longuyon & Environs'),
+  ('Pierrepont', 'Secteur Longuyon & Environs'),
+  ('Arrancy-sur-Crusnes', 'Secteur Longuyon & Environs'),
+  ('Beuveille', 'Secteur Longuyon & Environs'),
+  ('Doncourt-lès-Longuyon', 'Secteur Longuyon & Environs'),
+  ('Spincourt', 'Secteur Longuyon & Environs'),
+  
+  ('Boulange', 'Secteur Boulange / Audun'),
+  ('Aumetz', 'Secteur Boulange / Audun'),
+  ('Audun-le-Roman', 'Secteur Boulange / Audun'),
+  ('Ottange', 'Secteur Boulange / Audun'),
+  ('Trieux', 'Secteur Boulange / Audun'),
+  ('Hayange', 'Secteur Boulange / Audun')
+on conflict (name) do update set sector = excluded.sector;
+

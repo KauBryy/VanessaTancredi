@@ -133,7 +133,7 @@ const SearchHero = ({
 
                                         <div className="w-full text-left">
                                             <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">Localisation</label>
-                                            <CitySelector selectedCities={activeCities} onChange={setActiveCities} cityCounts={cityCounts} loading={loading} />
+                                            <CitySelector selectedCities={activeCities} onChange={setActiveCities} cityCounts={cityCounts} loading={loading} availableCities={cities} />
                                         </div>
                                         <div className="w-full text-left">
                                             <label className="block text-[#002B5B] text-xs font-bold uppercase tracking-wider mb-2 ml-1">
