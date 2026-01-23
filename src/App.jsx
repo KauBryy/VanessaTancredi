@@ -17,6 +17,7 @@ import ProtectedRoute from './pages/admin/ProtectedRoute';
 
 import FixedMobileContact from './components/FixedMobileContact';
 import ScrollToTop from './components/ScrollToTop';
+import { SearchProvider } from './context/SearchContext';
 
 function Layout() {
     return (
@@ -35,30 +36,32 @@ function Layout() {
 function App() {
     return (
         <Router>
-            <ScrollToTop />
-            <Routes>
-                {/* Public Routes */}
-                <Route path="/" element={<Layout />}>
-                    <Route index element={<Home />} />
-                    <Route path="annonces" element={<Properties />} />
-                    <Route path="property/:id" element={<PropertyDetail />} />
-                    <Route path="contact" element={<Contact />} />
-                    <Route path="estimation" element={<Estimation />} />
-                    <Route path="honoraires" element={<Fees />} />
-                    <Route path="mentions-legales" element={<Legal />} />
-                </Route>
+            <SearchProvider>
+                <ScrollToTop />
+                <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<Layout />}>
+                        <Route index element={<Home />} />
+                        <Route path="annonces" element={<Properties />} />
+                        <Route path="property/:id" element={<PropertyDetail />} />
+                        <Route path="contact" element={<Contact />} />
+                        <Route path="estimation" element={<Estimation />} />
+                        <Route path="honoraires" element={<Fees />} />
+                        <Route path="mentions-legales" element={<Legal />} />
+                    </Route>
 
-                {/* Admin Routes */}
-                <Route path="/admin/login" element={<Login />} />
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<Login />} />
 
-                {/* Protected Admin Routes */}
-                <Route path="/admin" element={<ProtectedRoute />}>
-                    <Route index element={<Dashboard />} />
-                    <Route path="cities" element={<CityManager />} />
-                    <Route path="new" element={<PropertyForm />} />
-                    <Route path="edit/:id" element={<PropertyForm />} />
-                </Route>
-            </Routes>
+                    {/* Protected Admin Routes */}
+                    <Route path="/admin" element={<ProtectedRoute />}>
+                        <Route index element={<Dashboard />} />
+                        <Route path="cities" element={<CityManager />} />
+                        <Route path="new" element={<PropertyForm />} />
+                        <Route path="edit/:id" element={<PropertyForm />} />
+                    </Route>
+                </Routes>
+            </SearchProvider>
         </Router>
     );
 }

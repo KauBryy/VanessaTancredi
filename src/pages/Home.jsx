@@ -9,22 +9,27 @@ import Testimonials from '../components/Testimonials';
 import { AGENT_INFO } from '../constants';
 import { supabase } from '../lib/supabase';
 import { MOCK_PROPERTIES } from '../data/mocks';
+import { useSearch } from '../context/SearchContext';
 
 const Home = () => {
     const navigate = useNavigate();
     const [properties, setProperties] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Filters
-    const [activeStatus, setActiveStatus] = useState('Tous');
-    const [activeType, setActiveType] = useState('Tous');
-    const [activeCities, setActiveCities] = useState([]); // Array of strings, empty = all
-    const [activeBudget, setActiveBudget] = useState('');
-    const [activeMinSurface, setActiveMinSurface] = useState('');
-    const [activeMinRooms, setActiveMinRooms] = useState('');
-    const [activeFeatures, setActiveFeatures] = useState([]); // ['Jardin', 'Garage', etc]
+    // Filters from Context
+    const {
+        activeStatus, setActiveStatus,
+        activeType, setActiveType,
+        activeCities, setActiveCities,
+        activeBudget, setActiveBudget,
+        activeMinSurface, setActiveMinSurface,
+        activeMinRooms, setActiveMinRooms,
+        activeFeatures, setActiveFeatures,
+        showFilteredResults, setShowFilteredResults,
+        resetFilters
+    } = useSearch();
+
     const [dbCities, setDbCities] = useState([]); // Cities from DB
-    const [showFilteredResults, setShowFilteredResults] = useState(false); // For expanding filtered grid on home
 
     useEffect(() => {
         const fetchProperties = async () => {
@@ -246,15 +251,7 @@ const Home = () => {
                             <motion.button
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                onClick={() => {
-                                    setActiveStatus('Tous');
-                                    setActiveType('Tous');
-                                    setActiveCities([]);
-                                    setActiveBudget('');
-                                    setActiveMinSurface('');
-                                    setActiveMinRooms('');
-                                    setActiveFeatures([]);
-                                }}
+                                onClick={resetFilters}
                                 className="group flex items-center gap-3 px-8 py-4 bg-[#002B5B] hover:bg-[#003d82] text-white rounded-2xl font-bold transition-all shadow-xl shadow-[#002B5B]/20 overflow-hidden relative"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-shimmer" />
