@@ -32,8 +32,9 @@ const PropertyForm = () => {
         dpe_ges: '' // A-G
     });
 
-    // Fetch data if edit mode
+    // Fetch data if edit mode OR check for import params
     useEffect(() => {
+        // 1. Edit Mode
         if (isEditMode) {
             const fetchProperty = async () => {
                 const { data, error } = await supabase
@@ -49,6 +50,25 @@ const PropertyForm = () => {
                 }
             };
             fetchProperty();
+        }
+
+        // 2. Import Mode (from Extension)
+        const params = new URLSearchParams(window.location.search);
+        const importDesc = params.get('import_desc');
+        const importImgs = params.get('import_imgs');
+
+        if (importDesc || importImgs) {
+            setFormData(prev => {
+                const newImgs = importImgs ? importImgs.split(',') : [];
+                return {
+                    ...prev,
+                    description: importDesc || prev.description,
+                    images: [...(prev.images || []), ...newImgs],
+                    image_url: (!prev.image_url && newImgs.length > 0) ? newImgs[0] : prev.image_url
+                };
+            });
+            // Clean URL to avoid re-triggering on refresh
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
     }, [isEditMode, id]);
 

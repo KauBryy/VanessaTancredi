@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 250px;
+            padding: 15px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+        }
+
+        h1 {
+            font-size: 16px;
+            color: #002B5B;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #C5A059;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: #b08d4a;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Assistant Vanessa</h1>
+    <p style="font-size: 13px; color: #555; text-align: center;">Ouvrez une annonce Facebook et cliquez ci-dessous.</p>
+    <button id="scrapeBtn">📥 Aspirer l'annonce</button>
+    <div id="status" class="status"></div>
+    <script src="popup.js"></script>
+</body>
+
+</html>

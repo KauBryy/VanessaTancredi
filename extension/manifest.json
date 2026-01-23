@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "Vanessa Tancredi - Assistant Immo",
+    "version": "1.0",
+    "description": "Aspire les annonces Facebook et Leboncoin pour pré-remplir votre site.",
+    "permissions": [
+        "activeTab",
+        "scripting"
+    ],
+    "action": {
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.facebook.com/*",
+                "*://*.leboncoin.fr/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
