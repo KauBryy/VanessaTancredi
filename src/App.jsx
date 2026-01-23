@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
+import Properties from './pages/Properties';
 import PropertyDetail from './pages/PropertyDetail';
 import Contact from './pages/Contact';
 import Estimation from './pages/Estimation';
@@ -39,6 +40,7 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/" element={<Layout />}>
                     <Route index element={<Home />} />
+                    <Route path="annonces" element={<Properties />} />
                     <Route path="property/:id" element={<PropertyDetail />} />
                     <Route path="contact" element={<Contact />} />
                     <Route path="estimation" element={<Estimation />} />

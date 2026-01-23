@@ -137,6 +137,13 @@ const Home = () => {
         return [...new Set(properties.filter(p => activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus).map(p => p.city))];
     }, [properties, activeStatus, dbCities]);
 
+    const isFilterActive = activeStatus !== 'Tous' || activeType !== 'Tous' || activeCities.length > 0 || activeBudget !== '' || activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
+
+    const displayedProperties = useMemo(() => {
+        if (isFilterActive) return filteredProperties;
+        return filteredProperties.slice(0, 6);
+    }, [filteredProperties, isFilterActive]);
+
     const containerVariants = {
         hidden: { opacity: 0 },
         show: {
@@ -193,7 +200,7 @@ const Home = () => {
                         className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
                     >
                         <AnimatePresence mode="wait">
-                            {filteredProperties.map(property => (
+                            {displayedProperties.map(property => (
                                 <PropertyCard
                                     key={property.id}
                                     property={property}
@@ -202,6 +209,19 @@ const Home = () => {
                             ))}
                         </AnimatePresence>
                     </motion.div>
+                )}
+
+                {!loading && !isFilterActive && filteredProperties.length > 6 && (
+                    <div className="mt-16 flex justify-center">
+                        <Button
+                            onClick={() => navigate('/annonces')}
+                            variant="outline"
+                            className="px-10 py-4 text-base rounded-xl border-2 border-[#002B5B] text-[#002B5B] hover:bg-[#002B5B] hover:text-white transition-all font-bold shadow-lg shadow-blue-900/5 group"
+                        >
+                            Voir toutes mes annonces
+                            <RefreshCcw size={18} className="ml-2 group-hover:rotate-180 transition-transform duration-700" />
+                        </Button>
+                    </div>
                 )}
 
                 {!loading && filteredProperties.length === 0 && (
