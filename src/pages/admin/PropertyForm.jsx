@@ -53,7 +53,20 @@ const PropertyForm = () => {
         }
 
         // 2. Import Mode (from Extension)
-        const params = new URLSearchParams(window.location.search);
+        // Check both standard search and hash search (for HashRouter compat)
+        const getParams = () => {
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.toString()) return searchParams;
+
+            // If using HashRouter, params might be after the hash: #/admin/new?desc=...
+            if (window.location.hash.includes('?')) {
+                const hashQuery = window.location.hash.split('?')[1];
+                return new URLSearchParams(hashQuery);
+            }
+            return new URLSearchParams();
+        };
+
+        const params = getParams();
         const importDesc = params.get('import_desc');
         const importImgs = params.get('import_imgs');
 
@@ -67,8 +80,13 @@ const PropertyForm = () => {
                     image_url: (!prev.image_url && newImgs.length > 0) ? newImgs[0] : prev.image_url
                 };
             });
-            // Clean URL to avoid re-triggering on refresh
-            window.history.replaceState({}, document.title, window.location.pathname);
+            // Clean URL to avoid re-triggering on refresh - handle both cases
+            if (window.location.hash.includes('?')) {
+                const cleanHash = window.location.hash.split('?')[0];
+                window.history.replaceState({}, document.title, window.location.pathname + window.location.search + cleanHash);
+            } else {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
         }
     }, [isEditMode, id]);
 
