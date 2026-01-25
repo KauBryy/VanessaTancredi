@@ -154,7 +154,7 @@ const Home = () => {
         }
     }, [hasRentals, activeStatus, loading, setActiveStatus]);
 
-    const isFilterActive = activeStatus !== 'Tous' || activeType !== 'Tous' || activeCities.length > 0 || activeBudget !== '' || activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
+    const isFilterActive = (hasRentals ? activeStatus !== 'Tous' : activeStatus !== 'Vente') || activeType !== 'Tous' || activeCities.length > 0 || activeBudget !== '' || activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
 
     const displayedProperties = useMemo(() => {
         if (!isFilterActive) return filteredProperties.slice(0, 6);
