@@ -95,14 +95,16 @@ const Home = () => {
             let score = 100;
             let missing = [];
 
-            // Favorite Bonus
+            // Favorite Bonus for Sorting ONLY
+            let sortScore = score;
             if (p.is_favorite) {
-                score += 1000;
+                sortScore += 1000;
             }
 
             // Surface check
             if (activeMinSurface !== '' && p.surface < parseInt(activeMinSurface)) {
                 score -= 20; // Heavy penalty for surface
+                sortScore -= 20;
                 missing.push(`Surface < ${activeMinSurface}m²`);
             }
 
@@ -110,6 +112,7 @@ const Home = () => {
             const roomsCount = p.rooms || (p.features ? parseInt(p.features.find(f => f.toLowerCase().includes('chambre')) || 0) : 0);
             if (activeMinRooms !== '' && roomsCount < parseInt(activeMinRooms)) {
                 score -= 20;
+                sortScore -= 20;
                 missing.push(`< ${activeMinRooms} Chambres`);
             }
 
@@ -129,15 +132,16 @@ const Home = () => {
 
                 if (!hasFeature) {
                     score -= 10;
+                    sortScore -= 10;
                     missing.push(`${feat === 'Sans travaux' ? 'Travaux à prévoir' : `Pas de ${feat}`}`);
                 }
             });
 
-            return { ...p, matchScore: Math.max(0, score), missingCriteria: missing };
+            return { ...p, matchScore: Math.max(0, score), sortScore: Math.max(0, sortScore), missingCriteria: missing };
         });
 
         // 3. Sort by Score (Best match first)
-        return scoredCandidates.sort((a, b) => b.matchScore - a.matchScore);
+        return scoredCandidates.sort((a, b) => b.sortScore - a.sortScore);
 
     }, [properties, activeStatus, activeType, activeCities, activeBudget, activeMinSurface, activeMinRooms, activeFeatures]);
 
