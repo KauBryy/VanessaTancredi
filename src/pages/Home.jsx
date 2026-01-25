@@ -66,7 +66,11 @@ const Home = () => {
 
     const filteredProperties = useMemo(() => {
         // 1. Strict Filters (Base Criteria)
+        // 1. Strict Filters (Base Criteria), BUT allow Favorite to bypass
         let candidates = properties.filter(p => {
+            // ALWAYS include favorites
+            if (p.is_favorite) return true;
+
             const statusMatch = activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus;
             const typeMatch = activeType === 'Tous' || p.type === activeType;
             const cityMatch = activeCities.length === 0 || activeCities.includes(p.city);
@@ -74,11 +78,16 @@ const Home = () => {
             return statusMatch && typeMatch && cityMatch && priceMatch;
         });
 
+        // Remove duplicates if favorite matched filters too (not needed because filter iterates once) 
+        // Actually, if we just return true for favorite, it stays.
+
         // If no advanced filters are active, return candidates directly (Score 100 implied)
         const hasAdvancedFilters = activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
 
         if (!hasAdvancedFilters) {
-            return candidates;
+            // Sort by favorite first, then by matchScore (implied 100), but we don't have scores yet.
+            // Just raw sort manually here: Favs top.
+            return candidates.sort((a, b) => (b.is_favorite ? 1 : 0) - (a.is_favorite ? 1 : 0));
         }
 
         // 2. Scoring & Ranking (Weighted Filters)

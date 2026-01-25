@@ -22,16 +22,8 @@ const PropertyCard = ({ property, onClick }) => (
                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
 
-            {/* Badges */}
+            {/* Badges Container Top Left */}
             <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 items-start">
-
-                {/* Coup de Coeur Badge */}
-                {property.is_favorite && (
-                    <span className="flex items-center gap-2 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-[#C5A059] to-[#D4B06A] shadow-xl rounded-full backdrop-blur-md border border-white/20 animate-pulse-slow">
-                        <span className="text-base">❤️</span> Coup de Cœur
-                    </span>
-                )}
-
                 {/* Sale/Rent Badge */}
                 <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.status === 'Location' ? 'bg-[#C5A059]/90' : 'bg-[#002B5B]/90'}`}>
                     {property.status === 'Location' ? 'Location' : 'Vente'}
@@ -50,6 +42,7 @@ const PropertyCard = ({ property, onClick }) => (
                 )}
             </div>
 
+            {/* Match Score Top Right */}
             <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
                 {property.matchScore !== undefined && (
                     <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.matchScore === 100 ? 'bg-green-500/90' : 'bg-orange-500/90'}`}>
@@ -58,6 +51,16 @@ const PropertyCard = ({ property, onClick }) => (
                 )}
             </div>
 
+            {/* Coup de Coeur Badge - Bottom Right of Image */}
+            {property.is_favorite && (
+                <div className="absolute bottom-16 right-4 z-30">
+                    <span className="flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-[#C5A059] to-[#D4B06A] shadow-xl rounded-full backdrop-blur-md border border-white/20 animate-pulse-slow">
+                        <span className="text-base">❤️</span> Coup de Cœur
+                    </span>
+                </div>
+            )}
+
+            {/* City Overlay Bottom */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#002B5B]/90 via-[#002B5B]/60 to-transparent p-6 pt-12 flex items-end justify-between text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 z-10">
                 <div className="flex items-center gap-2 text-sm font-medium tracking-wide">
                     <MapPin size={16} className="text-[#C5A059]" /> {property.city}
@@ -65,7 +68,7 @@ const PropertyCard = ({ property, onClick }) => (
             </div>
         </div>
 
-        {/* Contenu */}
+        {/* Content */}
         <div className="p-8 flex flex-col flex-1 relative bg-white z-20">
             <div className="mb-4">
                 <h3 className="text-xl font-display font-bold text-[#002B5B] leading-tight group-hover:text-[#C5A059] transition-colors mb-2">{property.title}</h3>
@@ -90,7 +93,7 @@ const PropertyCard = ({ property, onClick }) => (
                 </div>
             )}
 
-            {/* Caractéristiques Styled */}
+            {/* Features */}
             <div className="grid grid-cols-3 gap-2 mb-6 pb-6 border-b border-gray-100">
                 <div className="flex flex-col items-center justify-center p-2 bg-[#F4F7FA] rounded-lg">
                     <Home size={16} className="text-[#002B5B] mb-1" />
@@ -106,7 +109,7 @@ const PropertyCard = ({ property, onClick }) => (
                 </div>
             </div>
 
-            {/* Prix & CTA */}
+            {/* Price & CTA */}
             <div className="mt-auto flex items-center justify-between">
                 <div>
                     <p className="text-xs text-gray-400 uppercase font-bold mb-0.5">Prix</p>
