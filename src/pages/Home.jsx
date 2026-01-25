@@ -143,6 +143,17 @@ const Home = () => {
         return [...new Set(properties.filter(p => activeStatus === 'Tous' || (p.status || 'Vente') === activeStatus).map(p => p.city))];
     }, [properties, activeStatus, dbCities]);
 
+    const hasRentals = useMemo(() => {
+        return properties.some(p => p.status === 'Location');
+    }, [properties]);
+
+    useEffect(() => {
+        // If loaded and no rentals exist, but user selected rental-related status, force to Sale
+        if (!loading && !hasRentals && (activeStatus === 'Location' || activeStatus === 'Tous')) {
+            setActiveStatus('Vente');
+        }
+    }, [hasRentals, activeStatus, loading, setActiveStatus]);
+
     const isFilterActive = activeStatus !== 'Tous' || activeType !== 'Tous' || activeCities.length > 0 || activeBudget !== '' || activeMinSurface !== '' || activeMinRooms !== '' || activeFeatures.length > 0;
 
     const displayedProperties = useMemo(() => {
@@ -182,6 +193,7 @@ const Home = () => {
                 loading={loading}
                 resultsCount={filteredProperties.length}
                 isFilterActive={isFilterActive}
+                hasRentals={hasRentals}
             />
 
             <div id="results" className="max-w-7xl mx-auto px-4 pt-12 md:pt-48 lg:pt-40 pb-20 font-sans">

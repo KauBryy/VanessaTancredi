@@ -15,7 +15,8 @@ const SearchHero = ({
     activeMinRooms, setActiveMinRooms,
     activeFeatures, setActiveFeatures,
     cities, cityCounts, loading,
-    resultsCount, isFilterActive
+    resultsCount, isFilterActive,
+    hasRentals = false // Default to false to be safe
 }) => {
     const [actionTab, setActionTab] = useState('buy'); // 'buy' or 'sell'
     const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -108,9 +109,9 @@ const SearchHero = ({
                                                     onChange={(e) => setActiveStatus(e.target.value)}
                                                     className="w-full h-[58px] pl-12 pr-4 bg-white border border-gray-200 rounded-xl text-[#002B5B] font-bold focus:ring-2 focus:ring-[#C5A059]/20 focus:border-[#C5A059] outline-none transition-all appearance-none cursor-pointer hover:bg-gray-50"
                                                 >
-                                                    <option value="Tous">Acheter & Louer</option>
+                                                    {hasRentals && <option value="Tous">Acheter & Louer</option>}
                                                     <option value="Vente">Acheter</option>
-                                                    <option value="Location">Louer</option>
+                                                    {hasRentals && <option value="Location">Louer</option>}
                                                 </select>
                                             </div>
                                         </div>
