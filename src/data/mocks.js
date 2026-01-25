@@ -16,6 +16,7 @@ export const MOCK_PROPERTIES = [
         description: "Charmante maison individuelle située dans un secteur prisé de Boulange. Idéal pour une famille avec ses grands volumes.",
         image: maisonMercy,
         features: ["4 Chambres", "Grand Jardin", "Garage Double"],
+        is_favorite: true,
     },
     {
         id: '2',

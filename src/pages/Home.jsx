@@ -86,6 +86,11 @@ const Home = () => {
             let score = 100;
             let missing = [];
 
+            // Favorite Bonus
+            if (p.is_favorite) {
+                score += 1000;
+            }
+
             // Surface check
             if (activeMinSurface !== '' && p.surface < parseInt(activeMinSurface)) {
                 score -= 20; // Heavy penalty for surface

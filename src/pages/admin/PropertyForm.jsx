@@ -31,7 +31,8 @@ const PropertyForm = () => {
         images: [], // Gallery
         features: '',
         dpe_energy: '', // A-G
-        dpe_ges: '' // A-G
+        dpe_ges: '', // A-G
+        is_favorite: false // Coup de Cœur
     });
 
     useEffect(() => {
@@ -336,6 +337,24 @@ const PropertyForm = () => {
                             <option value="Location">Location</option>
                         </select>
                     </div>
+                </div>
+
+                <div className="flex items-center gap-4 bg-[#F4F7FA] p-4 rounded-xl border border-gray-100">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                        <div className={`w-12 h-6 rounded-full p-1 transition-colors ${formData.is_favorite ? 'bg-[#C5A059]' : 'bg-gray-300'}`}>
+                            <div className={`w-4 h-4 bg-white rounded-full shadow-md transform transition-transform ${formData.is_favorite ? 'translate-x-6' : 'translate-x-0'}`}></div>
+                        </div>
+                        <input
+                            type="checkbox"
+                            name="is_favorite"
+                            checked={formData.is_favorite}
+                            onChange={(e) => setFormData({ ...formData, is_favorite: e.target.checked })}
+                            className="hidden"
+                        />
+                        <span className="font-bold text-[#002B5B] group-hover:text-[#C5A059] transition-colors flex items-center gap-2">
+                            ❤️ Coup de Cœur Vanessa (Afficher en Une)
+                        </span>
+                    </label>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6">

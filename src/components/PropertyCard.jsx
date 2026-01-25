@@ -11,7 +11,7 @@ const PropertyCard = ({ property, onClick }) => (
         whileHover={{ y: -12, scale: 1.01 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         onClick={onClick}
-        className="bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full group rounded-2xl overflow-hidden font-sans relative"
+        className={`bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full group rounded-2xl overflow-hidden font-sans relative ${property.is_favorite ? 'ring-4 ring-[#C5A059]/30 shadow-[#C5A059]/20' : ''}`}
     >
         {/* Image + Badge Statut */}
         <div className="relative h-72 overflow-hidden">
@@ -23,7 +23,14 @@ const PropertyCard = ({ property, onClick }) => (
             />
 
             {/* Badges */}
-            <div className="absolute top-4 left-4 z-20 flex flex-col gap-2">
+            <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 items-start">
+
+                {/* Coup de Coeur Badge */}
+                {property.is_favorite && (
+                    <span className="flex items-center gap-2 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-[#C5A059] to-[#D4B06A] shadow-xl rounded-full backdrop-blur-md border border-white/20 animate-pulse-slow">
+                        <span className="text-base">❤️</span> Coup de Cœur
+                    </span>
+                )}
 
                 {/* Sale/Rent Badge */}
                 <span className={`px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.status === 'Location' ? 'bg-[#C5A059]/90' : 'bg-[#002B5B]/90'}`}>
@@ -50,8 +57,6 @@ const PropertyCard = ({ property, onClick }) => (
                     </span>
                 )}
             </div>
-
-
 
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#002B5B]/90 via-[#002B5B]/60 to-transparent p-6 pt-12 flex items-end justify-between text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 z-10">
                 <div className="flex items-center gap-2 text-sm font-medium tracking-wide">

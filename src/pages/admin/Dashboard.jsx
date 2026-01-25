@@ -37,6 +37,43 @@ const Dashboard = () => {
         navigate('/admin/login');
     };
 
+    const handleToggleFavorite = async (id) => {
+        // Optimistic update locally
+        const newProperties = properties.map(p => {
+            if (p.id === id) {
+                // If we are clicking the one that is already favorite, we toggle it off.
+                // If we are clicking a new one, it becomes favorite.
+                return { ...p, is_favorite: !p.is_favorite };
+            }
+            // If we are clicking a new one (to ON), all others must be OFF.
+            // If we are toggling OFF the current favorite, others remain OFF.
+            // Wait, logic: if clicking ID and it wasn't favorite -> It Becomes Favorite (Unique). Others become false.
+            // If clicking ID and it WAS favorite -> It becomes false. Others remain false.
+            if (!properties.find(prop => prop.id === id).is_favorite) {
+                return { ...p, is_favorite: false };
+            }
+            return p;
+        });
+
+        setProperties(newProperties);
+
+        // Perform actual update
+        const targetProp = properties.find(p => p.id === id);
+        const isTurningOn = !targetProp.is_favorite;
+
+        if (isTurningOn) {
+            // Disable all others first
+            await supabase.from('properties').update({ is_favorite: false }).neq('id', id);
+            // Enable target
+            await supabase.from('properties').update({ is_favorite: true }).eq('id', id);
+        } else {
+            // Just disable target
+            await supabase.from('properties').update({ is_favorite: false }).eq('id', id);
+        }
+
+        fetchProperties(); // Refresh to be sure
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
             {/* Top Bar for Admin */}
@@ -93,13 +130,17 @@ const Dashboard = () => {
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {properties.map(property => (
-                                        <tr key={property.id} className="hover:bg-blue-50/50 transition-colors">
+                                        <tr key={property.id} className={`transition-colors ${property.is_favorite ? 'bg-yellow-50 hover:bg-yellow-100' : 'hover:bg-blue-50/50'}`}>
                                             <td className="p-4 flex items-center gap-4">
-                                                <div className="w-16 h-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                                                <div className="w-16 h-12 bg-gray-100 rounded overflow-hidden flex-shrink-0 relative">
                                                     <img src={property.image_url || property.image} alt="" className="w-full h-full object-cover" />
+                                                    {property.is_favorite && <div className="absolute inset-0 bg-yellow-500/20 ring-2 ring-inset ring-[#C5A059]"></div>}
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-[#002B5B] truncate max-w-xs">{property.title}</p>
+                                                    <p className="font-bold text-[#002B5B] truncate max-w-xs flex items-center gap-2">
+                                                        {property.title}
+                                                        {property.is_favorite && <span className="text-xs text-[#C5A059]">❤️ Une</span>}
+                                                    </p>
                                                     <p className="text-xs text-gray-400">{property.type}</p>
                                                 </div>
                                             </td>
@@ -112,6 +153,13 @@ const Dashboard = () => {
                                             </td>
                                             <td className="p-4 text-right">
                                                 <div className="flex justify-end gap-2">
+                                                    <button
+                                                        onClick={() => handleToggleFavorite(property.id)}
+                                                        className={`p-2 rounded transition-colors ${property.is_favorite ? 'bg-red-50 text-red-500 hover:bg-red-100' : 'hover:bg-gray-100 text-gray-300 hover:text-red-400'}`}
+                                                        title={property.is_favorite ? "Retirer des favoris" : "Mettre en UNE (Remplace l'actuel)"}
+                                                    >
+                                                        <span className={property.is_favorite ? "text-lg" : "text-lg grayscale opacity-50"}>❤️</span>
+                                                    </button>
                                                     <button
                                                         onClick={() => navigate(`/admin/edit/${property.id}`)}
                                                         className="p-2 hover:bg-gray-100 rounded text-gray-500 hover:text-[#002B5B]"
