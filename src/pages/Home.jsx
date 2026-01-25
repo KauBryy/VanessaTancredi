@@ -225,7 +225,7 @@ const Home = () => {
                                     className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider hover:bg-red-100 transition-colors"
                                     title="Effacer tous les filtres"
                                 >
-                                    <X size={14} /> <span className="hidden sm:inline">Effacer filtre</span>
+                                    <X size={14} /> <span>Effacer filtre</span>
                                 </button>
                             )}
                         </div>
