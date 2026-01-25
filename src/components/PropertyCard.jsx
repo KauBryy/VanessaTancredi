@@ -42,8 +42,16 @@ const PropertyCard = ({ property, onClick }) => (
                 )}
             </div>
 
-            {/* Match Score Top Right */}
-            <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-2">
+            {/* Top Right Container (Heart + Match) */}
+            <div className="absolute top-4 right-4 z-30 flex flex-col items-end gap-2">
+                {/* Coup de Coeur Badge */}
+                {property.is_favorite && (
+                    <span className="flex items-center gap-2 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-[#C5A059] to-[#D4B06A] shadow-xl rounded-full backdrop-blur-md border border-white/20 animate-pulse-slow">
+                        <span className="text-base">❤️</span> Coup de Cœur
+                    </span>
+                )}
+
+                {/* Match Score */}
                 {property.matchScore !== undefined && (
                     <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-lg rounded-full backdrop-blur-md ${property.matchScore === 100 ? 'bg-green-500/90' : 'bg-orange-500/90'}`}>
                         Match {property.matchScore}%
@@ -51,16 +59,6 @@ const PropertyCard = ({ property, onClick }) => (
                 )}
             </div>
 
-            {/* Coup de Coeur Badge - Bottom Right of Image */}
-            {property.is_favorite && (
-                <div className="absolute bottom-16 right-4 z-30">
-                    <span className="flex items-center gap-2 px-4 py-2 text-xs font-black uppercase tracking-wider text-white bg-gradient-to-r from-[#C5A059] to-[#D4B06A] shadow-xl rounded-full backdrop-blur-md border border-white/20 animate-pulse-slow">
-                        <span className="text-base">❤️</span> Coup de Cœur
-                    </span>
-                </div>
-            )}
-
-            {/* City Overlay Bottom */}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#002B5B]/90 via-[#002B5B]/60 to-transparent p-6 pt-12 flex items-end justify-between text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300 z-10">
                 <div className="flex items-center gap-2 text-sm font-medium tracking-wide">
                     <MapPin size={16} className="text-[#C5A059]" /> {property.city}
