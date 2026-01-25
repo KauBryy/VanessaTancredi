@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronRight, MapPin, Maximize2, Home as HomeIcon, Star, CheckCircle2, Phone, Mail, ChevronLeft, X, BedDouble } from 'lucide-react';
+import { ChevronRight, MapPin, Maximize2, Home as HomeIcon, Star, CheckCircle2, Phone, Mail, ChevronLeft, X, BedDouble, MessageCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { formatPrice, AGENT_INFO } from '../constants';
 import { supabase } from '../lib/supabase';
@@ -354,11 +354,21 @@ const PropertyDetail = () => {
                             </div>
 
                             <div className="space-y-4 mb-8">
-                                <Button className="w-full bg-[#25D366] hover:bg-[#128C7E] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base">
+                                <Button className="w-full bg-[#002B5B] hover:bg-[#001F41] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base">
                                     <Phone size={20} /> Appeler maintenant
                                 </Button>
                                 <Button variant="outline" onClick={() => navigate('/contact')} className="w-full flex items-center justify-center gap-3 py-4 rounded-xl text-base border-gray-200 hover:border-[#002B5B] text-gray-600">
                                     <Mail size={20} /> Envoyer un email
+                                </Button>
+                                <Button
+                                    className="w-full bg-[#25D366] hover:bg-[#128C7E] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base"
+                                    onClick={() => {
+                                        const message = `Bonjour, Puis-je en savoir plus à ce sujet ? ${window.location.href}`;
+                                        const whatsappUrl = `https://wa.me/33695071322?text=${encodeURIComponent(message)}`;
+                                        window.open(whatsappUrl, '_blank');
+                                    }}
+                                >
+                                    <MessageCircle size={20} /> WhatsApp
                                 </Button>
                             </div>
 
