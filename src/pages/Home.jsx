@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapPin, User, CheckCircle2, Award, Sparkles, TrendingUp, Camera, Truck, Sofa, PenTool, RefreshCcw, Search } from 'lucide-react';
+import { MapPin, User, CheckCircle2, Award, Sparkles, TrendingUp, Camera, Truck, Sofa, PenTool, RefreshCcw, Search, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import PropertyCard from '../components/PropertyCard';
@@ -217,7 +217,18 @@ const Home = () => {
             <div id="results" className="max-w-7xl mx-auto px-4 pt-12 md:pt-48 lg:pt-40 pb-20 font-sans">
                 <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
                     <div className="text-center md:text-left">
-                        <h2 className="text-4xl font-display font-black text-[#002B5B]">Biens à la Une</h2>
+                        <div className="flex items-center gap-4 justify-center md:justify-start">
+                            <h2 className="text-4xl font-display font-black text-[#002B5B]">Biens à la Une</h2>
+                            {isFilterActive && (
+                                <button
+                                    onClick={resetFilters}
+                                    className="flex items-center gap-2 px-3 py-1 rounded-full bg-red-50 text-red-500 text-xs font-bold uppercase tracking-wider hover:bg-red-100 transition-colors"
+                                    title="Effacer tous les filtres"
+                                >
+                                    <X size={14} /> <span className="hidden sm:inline">Effacer filtre</span>
+                                </button>
+                            )}
+                        </div>
                         <div className="w-24 h-1.5 bg-[#C5A059] mt-3 rounded-full mx-auto md:mx-0"></div>
                     </div>
                     <p className="text-gray-500 max-w-sm text-right hidden md:block">
