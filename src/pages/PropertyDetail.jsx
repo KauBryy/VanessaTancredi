@@ -363,7 +363,7 @@ const PropertyDetail = () => {
                                 <Button
                                     className="w-full bg-[#25D366] hover:bg-[#128C7E] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base"
                                     onClick={() => {
-                                        const message = `Bonjour, Puis-je en savoir plus à ce sujet ? ${window.location.href}`;
+                                        const message = `Bonjour, Puis-je en savoir plus à ce sujet ? ${property.title} (${formatPrice(property.price)}) ${property.city}`;
                                         const whatsappUrl = `https://wa.me/33695071322?text=${encodeURIComponent(message)}`;
                                         window.open(whatsappUrl, '_blank');
                                     }}
