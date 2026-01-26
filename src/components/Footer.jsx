@@ -76,7 +76,13 @@ const Footer = () => {
             </div>
 
             <div className="max-w-7xl mx-auto mt-16 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center text-gray-600 text-xs gap-4">
-                <span>© 2026 Borbiconi Immobilier • Tous droits réservés.</span>
+                <div className="flex flex-col md:flex-row gap-2 items-center">
+                    <span>© 2026 Borbiconi Immobilier • Tous droits réservés.</span>
+                    <span className="hidden md:inline text-gray-800">•</span>
+                    <a href="https://kaubry.fr" target="_blank" rel="noopener noreferrer" className="hover:text-[#C5A059] transition-colors font-medium">
+                        Propulsé par <span className="font-bold">KauBry Apps</span>
+                    </a>
+                </div>
                 <div className="flex gap-6">
                     <Link to="/mentions-legales" onClick={() => window.scrollTo(0, 0)} className="hover:text-gray-400 cursor-pointer">Mentions Légales</Link>
                     <Link to="/mentions-legales" onClick={() => setTimeout(() => document.getElementById('privacy')?.scrollIntoView({ behavior: 'smooth' }), 100)} className="hover:text-gray-400 cursor-pointer">Politique de confidentialité</Link>
