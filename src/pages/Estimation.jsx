@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
+import { AGENT_INFO } from '../constants';
 
 const Estimation = () => {
     // Just reusing the contact or simplified logic for estimation requests
@@ -19,7 +20,7 @@ const Estimation = () => {
         setStatus('loading');
 
         try {
-            const response = await fetch("https://formsubmit.co/ajax/aubrypierre54260@gmail.com", {
+            const response = await fetch(`https://formsubmit.co/ajax/${AGENT_INFO.email}`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
