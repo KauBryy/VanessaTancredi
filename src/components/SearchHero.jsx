@@ -39,9 +39,9 @@ const SearchHero = ({
     };
 
     return (
-        <div className="relative md:h-[85vh] md:min-h-[700px] min-h-[90svh] h-auto flex items-start justify-center pt-12 md:pt-24 z-30 pb-12 md:pb-0 overflow-hidden">
+        <div className="relative md:h-[85vh] md:min-h-[700px] min-h-[90svh] h-auto flex items-start justify-center pt-12 md:pt-24 z-30 pb-12 md:pb-0">
             {/* Background Image - Split for Mobile Stability vs Desktop Parallax */}
-            <div className="absolute top-0 left-0 w-full h-[120vh] md:inset-0 md:h-full z-0">
+            <div className="absolute top-0 left-0 w-full h-[120vh] md:inset-0 md:h-full z-0 overflow-hidden">
                 {/* Mobile: Stable Image Element with fixed over-height to prevent resize jumps */}
                 <img
                     src={heroBg}
