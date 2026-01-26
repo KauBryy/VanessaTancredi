@@ -63,9 +63,9 @@ const SearchHero = ({
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
                 >
-                    <span className="inline-block py-1 px-3 rounded-full bg-[#C5A059]/20 border border-[#C5A059]/30 text-[#C5A059] text-xs font-bold tracking-[0.2em] mb-6 backdrop-blur-md">
+                    <span className="inline-block py-1 px-3 rounded-full bg-[#C5A059]/15 border border-[#C5A059]/30 text-[#C5A059] text-xs font-bold tracking-[0.2em] mb-6">
                         L'EXCELLENCE IMMOBILIÈRE
                     </span>
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-medium text-white mb-6 leading-tight drop-shadow-2xl">
