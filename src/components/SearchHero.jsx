@@ -39,12 +39,22 @@ const SearchHero = ({
     };
 
     return (
-        <div className="relative md:h-[85vh] md:min-h-[700px] h-auto flex items-start justify-center pt-12 md:pt-24 z-30 pb-12 md:pb-0">
-            {/* Background Image Parallax Effect can be simpler here: Fixed BG */}
-            <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed"
-                style={{ backgroundImage: `url(${heroBg})` }}
-            >
+        <div className="relative md:h-[85vh] md:min-h-[700px] min-h-[90svh] h-auto flex items-start justify-center pt-12 md:pt-24 z-30 pb-12 md:pb-0 overflow-hidden">
+            {/* Background Image - Split for Mobile Stability vs Desktop Parallax */}
+            <div className="absolute top-0 left-0 w-full h-[120vh] md:inset-0 md:h-full z-0">
+                {/* Mobile: Stable Image Element with fixed over-height to prevent resize jumps */}
+                <img
+                    src={heroBg}
+                    alt="Background Immobilier"
+                    className="w-full h-full object-cover object-center md:hidden"
+                    loading="eager"
+                />
+                {/* Desktop: Parallax Background */}
+                <div
+                    className="hidden md:block absolute inset-0 bg-cover bg-center bg-fixed"
+                    style={{ backgroundImage: `url(${heroBg})` }}
+                />
+                {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-b from-[#002B5B]/80 via-[#002B5B]/40 to-white"></div>
             </div>
 
