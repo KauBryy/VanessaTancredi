@@ -26,9 +26,31 @@ export const trackPropertyView = (property) => {
 };
 
 export const trackPageView = (path, title) => {
+    // Google Analytics
     trackEvent('page_view', {
         page_path: path,
         page_title: title || document.title,
         page_location: window.location.href
     });
+
+    // Supabase Custom Tracking
+    trackSupabaseView(path, title || document.title);
+};
+
+export const trackSupabaseView = async (path, title) => {
+    if (isAdminOptOut()) {
+        console.log('Analytics skipped (Admin Opt-out)');
+        return;
+    }
+
+    try {
+        await supabase.from('site_stats').insert({
+            page_path: path,
+            page_title: title,
+            visitor_id: getVisitorId(),
+            is_admin: false // We assume false, admins who didn't opt-out are still tracked but flagged if needed later
+        });
+    } catch (error) {
+        console.warn('Supabase tracking error:', error);
+    }
 };
