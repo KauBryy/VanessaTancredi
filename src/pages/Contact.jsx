@@ -3,6 +3,7 @@ import { Phone, Mail, MapPin } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { AGENT_INFO } from '../constants';
 import { supabase } from '../lib/supabase';
+import { trackEvent } from '../lib/analytics';
 
 const Contact = () => {
     const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
@@ -30,6 +31,10 @@ const Contact = () => {
 
             if (response.ok) {
                 setStatus('success');
+                trackEvent('generate_lead', {
+                    method: 'contact_form',
+                    email: formData.email
+                });
                 setFormData({ name: '', phone: '', email: '', message: '' });
             } else {
                 throw new Error('Erreur FormSubmit');

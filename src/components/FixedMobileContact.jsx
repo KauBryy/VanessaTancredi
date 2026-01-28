@@ -3,6 +3,7 @@ import { Phone, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AGENT_INFO } from '../constants';
+import { trackContactClick } from '../lib/analytics';
 
 const FixedMobileContact = () => {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ const FixedMobileContact = () => {
                 <motion.a
                     whileTap={{ scale: 0.95 }}
                     href={`tel:${AGENT_INFO.phone.replace(/\s/g, '')}`}
+                    onClick={() => trackContactClick('phone_mobile_sticky')}
                     className="flex-[0.35] flex items-center justify-center bg-gradient-to-br from-[#003B7B] to-[#001B3B] text-white rounded-xl py-4 border border-white/5 shadow-lg shadow-[#002B5B]/20 relative overflow-hidden group"
                     aria-label="Appeler"
                 >
@@ -25,6 +27,7 @@ const FixedMobileContact = () => {
                 <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
+                        trackContactClick('estimation_mobile_sticky');
                         navigate('/estimation');
                         window.scrollTo(0, 0);
                     }}

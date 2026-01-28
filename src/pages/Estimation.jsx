@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabase';
 import { AGENT_INFO } from '../constants';
+import { trackEvent } from '../lib/analytics';
 
 const Estimation = () => {
     // Just reusing the contact or simplified logic for estimation requests
@@ -40,6 +41,11 @@ const Estimation = () => {
 
             if (response.ok) {
                 setStatus('success');
+                trackEvent('generate_lead', {
+                    method: 'estimation_form',
+                    property_type: formData.type,
+                    city: formData.city
+                });
                 setFormData({ type: 'Maison', city: '', surface: '', rooms: '', name: '', phone: '', email: '' });
             } else {
                 throw new Error('Erreur FormSubmit');

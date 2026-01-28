@@ -6,6 +6,8 @@ import CitySelector from './CitySelector';
 import { motion, AnimatePresence } from 'framer-motion';
 import heroBg from '../assets/hero_background_charme.png';
 
+import { trackEvent } from '../lib/analytics';
+
 const SearchHero = ({
     activeStatus, setActiveStatus,
     activeType, setActiveType,
@@ -227,7 +229,13 @@ const SearchHero = ({
                                                 className="mt-6 flex justify-center"
                                             >
                                                 <button
-                                                    onClick={() => document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' })}
+                                                    onClick={() => {
+                                                        trackEvent('search', {
+                                                            search_term: `${activeStatus} ${activeType} in ${activeCities.join(', ')}`,
+                                                            results_count: resultsCount
+                                                        });
+                                                        document.getElementById('results')?.scrollIntoView({ behavior: 'smooth' });
+                                                    }}
                                                     className="bg-[#002B5B] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-xl shadow-blue-900/30 flex items-center gap-3 hover:bg-[#003d82] transition-all hover:translate-y-[-2px]"
                                                 >
                                                     <Search size={18} />

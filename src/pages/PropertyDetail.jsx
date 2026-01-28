@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import { formatPrice, AGENT_INFO } from '../constants';
 import { supabase } from '../lib/supabase';
 import { MOCK_PROPERTIES } from '../data/mocks';
+import { trackContactClick, trackPropertyView } from '../lib/analytics';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -89,6 +90,16 @@ const PropertyDetail = () => {
         fetchProperty();
         window.scrollTo(0, 0);
     }, [id]);
+
+    useEffect(() => {
+        if (property) {
+            document.title = `${property.title} - Vanessa Tancredi Immobilier`;
+            trackPropertyView(property);
+        }
+        return () => {
+            document.title = 'Vanessa Tancredi - Experte immobilière en Pays-Haut';
+        };
+    }, [property]);
 
     if (loading) return <div className="p-20 text-center">Chargement...</div>;
     if (!property) return <div className="p-20 text-center">Bien introuvable.</div>;
@@ -354,15 +365,29 @@ const PropertyDetail = () => {
                             </div>
 
                             <div className="space-y-4 mb-8">
-                                <Button className="w-full bg-[#002B5B] hover:bg-[#001F41] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base">
+                                <Button
+                                    className="w-full bg-[#002B5B] hover:bg-[#001F41] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base"
+                                    onClick={() => {
+                                        trackContactClick('phone', property.title);
+                                        window.location.href = `tel:${AGENT_INFO.phone.replace(/\s/g, '')}`;
+                                    }}
+                                >
                                     <Phone size={20} /> Appeler maintenant
                                 </Button>
-                                <Button variant="outline" onClick={() => navigate('/contact')} className="w-full flex items-center justify-center gap-3 py-4 rounded-xl text-base border-gray-200 hover:border-[#002B5B] text-gray-600">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        trackContactClick('email_page', property.title);
+                                        navigate('/contact');
+                                    }}
+                                    className="w-full flex items-center justify-center gap-3 py-4 rounded-xl text-base border-gray-200 hover:border-[#002B5B] text-gray-600"
+                                >
                                     <Mail size={20} /> Envoyer un email
                                 </Button>
                                 <Button
                                     className="w-full bg-[#25D366] hover:bg-[#128C7E] shadow-none flex items-center justify-center gap-3 py-4 rounded-xl text-base"
                                     onClick={() => {
+                                        trackContactClick('whatsapp', property.title);
                                         const message = `Bonjour, Puis-je en savoir plus à ce sujet ? ${property.title} (${formatPrice(property.price)}) ${property.city}`;
                                         const whatsappUrl = `https://wa.me/33695071322?text=${encodeURIComponent(message)}`;
                                         window.open(whatsappUrl, '_blank');
