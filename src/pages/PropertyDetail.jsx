@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronRight, MapPin, Maximize2, Home as HomeIcon, Star, CheckCircle2, Phone, Mail, ChevronLeft, X, BedDouble, MessageCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { formatPrice, AGENT_INFO } from '../constants';
+import { AGENT_INFO, formatPrice } from '../constants';
 import { supabase } from '../lib/supabase';
 import { MOCK_PROPERTIES } from '../data/mocks';
-import { trackContactClick, trackPropertyView } from '../lib/analytics';
+import { trackContactClick, trackPropertyView, trackPageView } from '../lib/analytics';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -93,8 +93,11 @@ const PropertyDetail = () => {
 
     useEffect(() => {
         if (property) {
-            document.title = `${property.title} - Vanessa Tancredi Immobilier`;
+            const fullTitle = `${property.title} à ${property.city} - Vanessa Tancredi Immobilier`;
+            document.title = fullTitle;
             trackPropertyView(property);
+            // Manually trigger a page view once we have the real title
+            trackPageView(window.location.hash, fullTitle);
         }
         return () => {
             document.title = 'Vanessa Tancredi - Experte immobilière en Pays-Haut';
