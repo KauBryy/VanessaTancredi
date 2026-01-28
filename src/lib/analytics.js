@@ -24,3 +24,11 @@ export const trackPropertyView = (property) => {
         }]
     });
 };
+
+export const trackPageView = (path, title) => {
+    trackEvent('page_view', {
+        page_path: path,
+        page_title: title || document.title,
+        page_location: window.location.href
+    });
+};

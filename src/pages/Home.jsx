@@ -62,6 +62,7 @@ const Home = () => {
 
         fetchProperties();
         fetchCities();
+        document.title = 'Vanessa Tancredi - Experte immobilière en Pays-Haut';
     }, []);
 
     const filteredProperties = useMemo(() => {

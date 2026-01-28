@@ -33,6 +33,7 @@ const Properties = () => {
         };
 
         fetchProperties();
+        document.title = 'Toutes les annonces immobilières - Vanessa Tancredi';
     }, []);
 
     const containerVariants = {

@@ -17,6 +17,7 @@ import ProtectedRoute from './pages/admin/ProtectedRoute';
 
 import FixedMobileContact from './components/FixedMobileContact';
 import ScrollToTop from './components/ScrollToTop';
+import AnalyticsTracker from './components/AnalyticsTracker';
 import { SearchProvider } from './context/SearchContext';
 
 function Layout() {
@@ -38,6 +39,7 @@ function App() {
         <Router>
             <SearchProvider>
                 <ScrollToTop />
+                <AnalyticsTracker />
                 <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<Layout />}>

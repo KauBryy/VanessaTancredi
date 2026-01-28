@@ -9,6 +9,10 @@ const Contact = () => {
     const [formData, setFormData] = useState({ name: '', phone: '', email: '', message: '' });
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
 
+    React.useEffect(() => {
+        document.title = 'Contactez Vanessa Tancredi - Experte Immobilière';
+    }, []);
+
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {

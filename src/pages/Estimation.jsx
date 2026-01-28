@@ -14,6 +14,10 @@ const Estimation = () => {
     });
     const [status, setStatus] = useState('idle');
 
+    React.useEffect(() => {
+        document.title = 'Estimation Immobilière Gratuite - Vanessa Tancredi';
+    }, []);
+
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleSubmit = async (e) => {
