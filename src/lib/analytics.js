@@ -37,6 +37,20 @@ export const trackPageView = (path, title) => {
     trackSupabaseView(path, title || document.title);
 };
 
+// Helper to get or create a visitor ID
+const getVisitorId = () => {
+    let vid = localStorage.getItem('site_visitor_id');
+    if (!vid) {
+        // Simple UUID v4 generator compatible with all browsers
+        vid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+        localStorage.setItem('site_visitor_id', vid);
+    }
+    return vid;
+};
+
 export const trackSupabaseView = async (path, title) => {
     if (isAdminOptOut()) {
         console.log('Analytics skipped (Admin Opt-out)');
