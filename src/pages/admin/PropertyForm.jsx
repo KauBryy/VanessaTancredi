@@ -27,8 +27,6 @@ const PropertyForm = () => {
         description: '',
         image_url: '',
         images: [], // Gallery
-        image_url: '',
-        images: [], // Gallery
         features: '',
         dpe_energy: '', // A-G
         dpe_ges: '', // A-G
@@ -122,6 +120,45 @@ const PropertyForm = () => {
         return () => window.removeEventListener('import_data_ready', eventListener);
     }, [isEditMode, id]);
 
+    // IMAGE COMPRESSION HELPER
+    const compressImage = (file, maxWidth = 2000) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    // Calculate new dimensions
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = (maxWidth / width) * height;
+                        width = maxWidth;
+                    } else {
+                        // Image already small enough, skip compression/resize
+                        return resolve(file);
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        const compressedFile = new File([blob], file.name, {
+                            type: 'image/jpeg',
+                            lastModified: Date.now(),
+                        });
+                        resolve(compressedFile);
+                    }, 'image/jpeg', 0.85); // 85% quality is visually indistinguishable from 100% but 5x smaller
+                };
+            };
+        });
+    };
+
     // Handle Image Upload
     const onDrop = useCallback(async (acceptedFiles) => {
         const file = acceptedFiles[0];
@@ -129,13 +166,16 @@ const PropertyForm = () => {
 
         setUploading(true);
         try {
+            // OPTIMISATION : Compresser avant l'envoi
+            const optimizedFile = await compressImage(file);
+
             const fileExt = file.name.split('.').pop();
             const fileName = `${Math.random()}.${fileExt}`;
             const filePath = `${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('property-images')
-                .upload(filePath, file);
+                .upload(filePath, optimizedFile);
 
             if (uploadError) throw uploadError;
 
@@ -257,9 +297,11 @@ const PropertyForm = () => {
                                                 const files = Array.from(e.target.files);
                                                 setUploading(true);
                                                 for (const file of files) {
+                                                    // OPTIMISATION : Compresser avant l'envoi
+                                                    const optimizedFile = await compressImage(file);
                                                     const fileExt = file.name.split('.').pop();
                                                     const fileName = `gallery-${Math.random()}.${fileExt}`;
-                                                    const { error } = await supabase.storage.from('property-images').upload(fileName, file);
+                                                    const { error } = await supabase.storage.from('property-images').upload(fileName, optimizedFile);
                                                     if (!error) {
                                                         const { data: { publicUrl } } = supabase.storage.from('property-images').getPublicUrl(fileName);
                                                         setFormData(prev => ({ ...prev, images: [...(prev.images || []), publicUrl] }));

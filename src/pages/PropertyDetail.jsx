@@ -6,6 +6,7 @@ import { AGENT_INFO, formatPrice } from '../constants';
 import { supabase } from '../lib/supabase';
 import { MOCK_PROPERTIES } from '../data/mocks';
 import { trackContactClick, trackPropertyView, trackPageView } from '../lib/analytics';
+import { getOptimizedImageUrl } from '../lib/imageOptimizer';
 
 const PropertyDetail = () => {
     const { id } = useParams();
@@ -177,7 +178,7 @@ const PropertyDetail = () => {
                                 onClick={openLightbox}
                             >
                                 <img
-                                    src={selectedImage || property.image_url || property.image}
+                                    src={getOptimizedImageUrl(selectedImage || property.image_url || property.image, 1200)}
                                     alt={property.title}
                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 />
@@ -196,7 +197,7 @@ const PropertyDetail = () => {
                                         onClick={() => setSelectedImage(null)} // null means show main image_url
                                         className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${!selectedImage ? 'border-[#C5A059] opacity-100' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                     >
-                                        <img src={property.image_url || property.image} alt="Principale" className="w-full h-full object-cover" />
+                                        <img src={getOptimizedImageUrl(property.image_url || property.image, 200)} alt="Principale" className="w-full h-full object-cover" />
                                     </button>
 
                                     {/* Gallery Images */}
@@ -206,7 +207,7 @@ const PropertyDetail = () => {
                                             onClick={() => setSelectedImage(img)}
                                             className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImage === img ? 'border-[#C5A059] opacity-100' : 'border-transparent opacity-70 hover:opacity-100'}`}
                                         >
-                                            <img src={img} alt={`Vue ${idx + 1}`} className="w-full h-full object-cover" />
+                                            <img src={getOptimizedImageUrl(img, 200)} alt={`Vue ${idx + 1}`} className="w-full h-full object-cover" />
                                         </button>
                                     ))}
                                 </div>

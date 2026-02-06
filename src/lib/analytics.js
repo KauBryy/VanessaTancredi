@@ -4,7 +4,12 @@ import { supabase } from './supabase';
 const getVisitorId = () => {
     let vid = localStorage.getItem('site_visitor_id');
     if (!vid) {
-        vid = crypto.randomUUID();
+        // Fallback if crypto.randomUUID is not available (e.g. non-HTTPS or older browsers)
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+            vid = crypto.randomUUID();
+        } else {
+            vid = 'v-' + Math.random().toString(36).substring(2, 9) + '-' + Date.now().toString(36);
+        }
         localStorage.setItem('site_visitor_id', vid);
     }
     return vid;

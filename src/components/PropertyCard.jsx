@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, Maximize2, Home, ArrowRight, Bed } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { formatPrice } from '../constants';
+import { getOptimizedImageUrl } from '../lib/imageOptimizer';
 import { trackEvent } from '../lib/analytics';
 
 const PropertyCard = ({ property, onClick }) => {
@@ -27,7 +28,7 @@ const PropertyCard = ({ property, onClick }) => {
             <div className="relative h-72 overflow-hidden">
                 <div className="absolute inset-0 bg-black/10 z-10 group-hover:bg-black/0 transition-colors"></div>
                 <img
-                    src={property.image_url || property.image || 'https://via.placeholder.com/400x300'}
+                    src={getOptimizedImageUrl(property.image_url || property.image, 600) || 'https://via.placeholder.com/400x300'}
                     alt={property.title}
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
