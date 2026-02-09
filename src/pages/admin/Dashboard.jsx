@@ -34,42 +34,23 @@ const Dashboard = () => {
     };
 
     const fetchStats = async () => {
-        // Calculate date thresholds
-        const now = new Date();
-        const oneDayAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString();
-        const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)).toISOString();
-        const thirtyDaysAgo = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString();
-
         try {
-            // Get all stats for last 30 days to process locally (simpler than complex SQL grouping for now)
-            const { data, error } = await supabase
-                .from('site_stats')
-                .select('visitor_id, created_at')
-                .gte('created_at', thirtyDaysAgo)
-                .order('created_at', { ascending: false })
-                .limit(50000);
+            // Updated to use server-side calculation for accuracy and performance
+            const { data, error } = await supabase.rpc('get_dashboard_stats');
 
             if (error) throw error;
 
             if (data) {
-                // Filter arrays
-                const stats24h = data.filter(d => d.created_at >= oneDayAgo);
-                const stats7d = data.filter(d => d.created_at >= sevenDaysAgo);
-
-                // Unique Visitors Sets
-                const unique24h = new Set(stats24h.map(d => d.visitor_id)).size;
-                const unique7d = new Set(stats7d.map(d => d.visitor_id)).size;
-                const unique30d = new Set(data.map(d => d.visitor_id)).size;
-
                 setStats({
-                    visitors24h: unique24h,
-                    views24h: stats24h.length,
-                    visitors7d: unique7d,
-                    visitors30d: unique30d
+                    visitors24h: data.visitors24h || 0,
+                    views24h: data.views24h || 0,
+                    visitors7d: data.visitors7d || 0,
+                    visitors30d: data.visitors30d || 0
                 });
             }
         } catch (e) {
             console.error("Error fetching stats:", e);
+            // Fallback for graceful degradation if RPC is not set up
         }
     };
 
