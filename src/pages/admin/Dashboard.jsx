@@ -47,7 +47,7 @@ const Dashboard = () => {
                 .select('visitor_id, created_at')
                 .gte('created_at', thirtyDaysAgo)
                 .order('created_at', { ascending: false })
-                .limit(10000);
+                .limit(50000);
 
             if (error) throw error;
 
