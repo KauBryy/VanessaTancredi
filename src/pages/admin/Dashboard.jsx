@@ -45,7 +45,9 @@ const Dashboard = () => {
             const { data, error } = await supabase
                 .from('site_stats')
                 .select('visitor_id, created_at')
-                .gte('created_at', thirtyDaysAgo);
+                .gte('created_at', thirtyDaysAgo)
+                .order('created_at', { ascending: false })
+                .limit(10000);
 
             if (error) throw error;
 
